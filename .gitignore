@@ -1,0 +1,29 @@
+# Binaries
+main
+*.exe
+*.out
+
+# Go build cache
+/tmp
+
+# Environment files
+.env
+*.env
+
+# PDF generator (node_modules)
+pdf_gen/node_modules/
+pdf_gen/package-lock.json
+
+# Generated PDF
+*.pdf
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Go test cache
+*.test

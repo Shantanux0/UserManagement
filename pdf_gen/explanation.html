@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>User Management API - Complete Beginner's Code Explanation</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',sans-serif;background:#0f1117;color:#e2e8f0;line-height:1.8;font-size:14px}
+  .cover{background:linear-gradient(135deg,#1a1f2e 0%,#0f172a 50%,#1e1b4b 100%);min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:60px;page-break-after:always}
+  .cover-badge{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;padding:8px 24px;border-radius:50px;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:32px;display:inline-block}
+  .cover h1{font-size:52px;font-weight:800;background:linear-gradient(135deg,#a5b4fc,#c4b5fd,#f0abfc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.2;margin-bottom:24px}
+  .cover h2{font-size:22px;color:#94a3b8;font-weight:400;margin-bottom:48px;max-width:700px}
+  .cover-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:48px;max-width:700px}
+  .cover-chip{background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.3);padding:10px 16px;border-radius:10px;font-size:12px;font-weight:600;color:#a5b4fc}
+  .toc{background:#13182a;padding:60px;page-break-after:always}
+  .toc h2{font-size:32px;font-weight:800;color:#a5b4fc;margin-bottom:40px;padding-bottom:16px;border-bottom:2px solid rgba(99,102,241,0.3)}
+  .toc-item{display:flex;align-items:center;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.05)}
+  .toc-num{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;margin-right:16px;flex-shrink:0}
+  .toc-title{font-size:15px;color:#e2e8f0;font-weight:500;flex:1}
+  .toc-file{font-family:'Fira Code',monospace;font-size:11px;color:#6366f1;background:rgba(99,102,241,0.1);padding:3px 10px;border-radius:5px}
+  .chapter{padding:60px;page-break-before:always}
+  .chapter-header{background:linear-gradient(135deg,rgba(99,102,241,0.2),rgba(139,92,246,0.1));border:1px solid rgba(99,102,241,0.3);border-radius:20px;padding:40px;margin-bottom:48px}
+  .chapter-num{font-size:12px;font-weight:700;color:#6366f1;letter-spacing:3px;text-transform:uppercase;margin-bottom:12px}
+  .chapter-title{font-size:36px;font-weight:800;color:#f1f5f9;margin-bottom:12px}
+  .chapter-subtitle{font-size:15px;color:#94a3b8;margin-bottom:20px}
+  .filepath{font-family:'Fira Code',monospace;font-size:13px;background:rgba(99,102,241,0.15);color:#a5b4fc;padding:10px 20px;border-radius:10px;border:1px solid rgba(99,102,241,0.25);display:inline-block}
+  .concept-box{background:rgba(99,102,241,0.1);border-left:4px solid #6366f1;border-radius:0 12px 12px 0;padding:20px 24px;margin:24px 0}
+  .concept-box .label{font-size:11px;font-weight:700;color:#6366f1;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
+  .concept-box p{color:#cbd5e1;font-size:14px;line-height:1.7}
+  .analogy-box{background:linear-gradient(135deg,rgba(245,158,11,0.1),rgba(217,119,6,0.05));border:1px solid rgba(245,158,11,0.3);border-radius:12px;padding:20px 24px;margin:20px 0}
+  .analogy-box .label{font-size:11px;font-weight:700;color:#f59e0b;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
+  .analogy-box p{color:#fde68a;font-size:14px}
+  .code-section{margin:32px 0}
+  .code-section-title{font-size:18px;font-weight:700;color:#c4b5fd;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+  .code-section-title::before{content:'';width:4px;height:24px;background:linear-gradient(180deg,#6366f1,#8b5cf6);border-radius:2px;display:inline-block}
+  .code-block{background:#0d1117;border:1px solid rgba(99,102,241,0.2);border-radius:12px;overflow:hidden;margin-bottom:8px}
+  .code-block .code-header{background:rgba(99,102,241,0.1);padding:10px 16px;font-family:'Fira Code',monospace;font-size:11px;color:#6366f1;border-bottom:1px solid rgba(99,102,241,0.15)}
+  .code-block pre{padding:20px;overflow-x:auto;font-family:'Fira Code',monospace;font-size:13px;line-height:1.8;color:#e2e8f0}
+  .line-explain{margin:8px 0 24px 0;background:#111827;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,0.06)}
+  .line-row{display:flex;align-items:flex-start;border-bottom:1px solid rgba(255,255,255,0.04);transition:background 0.2s}
+  .line-row:last-child{border-bottom:none}
+  .line-row.highlight{background:rgba(99,102,241,0.08)}
+  .line-num{font-family:'Fira Code',monospace;font-size:11px;color:#4b5563;padding:12px 14px;min-width:48px;text-align:right;border-right:1px solid rgba(255,255,255,0.06);flex-shrink:0}
+  .line-code{font-family:'Fira Code',monospace;font-size:12px;color:#a5b4fc;padding:12px 16px;min-width:260px;max-width:300px;flex-shrink:0;word-break:break-all;border-right:1px solid rgba(255,255,255,0.06)}
+  .line-desc{font-size:13px;color:#cbd5e1;padding:12px 16px;line-height:1.6;flex:1}
+  .line-desc strong{color:#a5b4fc}
+  .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:24px 0}
+  .info-card{background:#111827;border:1px solid rgba(99,102,241,0.2);border-radius:12px;padding:20px}
+  .info-card h4{font-size:13px;font-weight:700;color:#6366f1;margin-bottom:10px;text-transform:uppercase;letter-spacing:1px}
+  .info-card p{font-size:13px;color:#94a3b8;line-height:1.6}
+  .section-intro{font-size:15px;color:#94a3b8;line-height:1.8;margin-bottom:32px;background:#111827;padding:24px;border-radius:12px;border-left:3px solid #6366f1}
+  .keyword{font-family:'Fira Code',monospace;background:rgba(99,102,241,0.15);color:#a5b4fc;padding:1px 6px;border-radius:4px;font-size:12px}
+  .callout{background:linear-gradient(135deg,rgba(16,185,129,0.1),rgba(5,150,105,0.05));border:1px solid rgba(16,185,129,0.3);border-radius:12px;padding:20px 24px;margin:20px 0}
+  .callout .label{font-size:11px;font-weight:700;color:#10b981;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
+  .callout p{color:#6ee7b7;font-size:14px;line-height:1.7}
+  .warning{background:linear-gradient(135deg,rgba(239,68,68,0.1),rgba(185,28,28,0.05));border:1px solid rgba(239,68,68,0.3);border-radius:12px;padding:20px 24px;margin:20px 0}
+  .warning .label{font-size:11px;font-weight:700;color:#ef4444;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
+  .warning p{color:#fca5a5;font-size:14px}
+  .flow-diagram{background:#0d1117;border:1px solid rgba(99,102,241,0.2);border-radius:12px;padding:32px;margin:24px 0;text-align:center}
+  .flow-step{display:inline-block;background:linear-gradient(135deg,rgba(99,102,241,0.2),rgba(139,92,246,0.1));border:1px solid rgba(99,102,241,0.4);border-radius:10px;padding:12px 20px;font-size:13px;font-weight:600;color:#a5b4fc;margin:6px}
+  .flow-arrow{color:#6366f1;font-size:20px;margin:0 4px}
+  h3{font-size:22px;font-weight:700;color:#f1f5f9;margin:40px 0 16px}
+  h4{font-size:16px;font-weight:600;color:#c4b5fd;margin:28px 0 12px}
+  p{color:#94a3b8;line-height:1.8;margin-bottom:16px}
+  ul{color:#94a3b8;line-height:1.8;padding-left:24px;margin-bottom:16px}
+  ul li{margin-bottom:8px}
+  .divider{height:1px;background:linear-gradient(90deg,transparent,rgba(99,102,241,0.4),transparent);margin:48px 0}
+  .summary-table{width:100%;border-collapse:collapse;margin:24px 0}
+  .summary-table th{background:rgba(99,102,241,0.2);color:#a5b4fc;padding:12px 16px;text-align:left;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px}
+  .summary-table td{padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.05);font-size:13px;color:#cbd5e1}
+  .summary-table tr:hover td{background:rgba(99,102,241,0.05)}
+  @media print{body{background:#fff;color:#000}.cover{background:#1a1f2e;-webkit-print-color-adjust:exact}.chapter{page-break-before:always}}
+</style>
+</head>
+<body>
+
+<!-- ===== COVER PAGE ===== -->
+<div class="cover">
+  <div class="cover-badge">Complete Beginner's Guide</div>
+  <h1>User Management REST API</h1>
+  <h2>A line-by-line explanation of every file — from database to Docker, written for absolute beginners in Go</h2>
+  <div class="cover-grid">
+    <div class="cover-chip">GoFiber Framework</div>
+    <div class="cover-chip">SQLC + PostgreSQL</div>
+    <div class="cover-chip">Uber Zap Logging</div>
+    <div class="cover-chip">Input Validation</div>
+    <div class="cover-chip">Docker + Compose</div>
+    <div class="cover-chip">Unit Testing</div>
+  </div>
+</div>
+
+<!-- ===== TABLE OF CONTENTS ===== -->
+<div class="toc">
+  <h2>📚 Table of Contents</h2>
+  <div class="toc-item"><div class="toc-num">1</div><div class="toc-title">What is this project? (Big Picture)</div><div class="toc-file">Overview</div></div>
+  <div class="toc-item"><div class="toc-num">2</div><div class="toc-title">Project Structure — How folders are organized</div><div class="toc-file">Directory Tree</div></div>
+  <div class="toc-item"><div class="toc-num">3</div><div class="toc-title">go.mod — The project dependency manifest</div><div class="toc-file">go.mod</div></div>
+  <div class="toc-item"><div class="toc-num">4</div><div class="toc-title">sqlc.yaml — Database code generator config</div><div class="toc-file">sqlc.yaml</div></div>
+  <div class="toc-item"><div class="toc-num">5</div><div class="toc-title">Database Migration SQL files</div><div class="toc-file">db/migrations/</div></div>
+  <div class="toc-item"><div class="toc-num">6</div><div class="toc-title">SQL Queries file (What we ask the database)</div><div class="toc-file">db/query/users.sql</div></div>
+  <div class="toc-item"><div class="toc-num">7</div><div class="toc-title">SQLC Generated Code (Auto-generated Go)</div><div class="toc-file">db/sqlc/</div></div>
+  <div class="toc-item"><div class="toc-num">8</div><div class="toc-title">Migration Runner (Auto-runs schema on start)</div><div class="toc-file">db/migrations.go</div></div>
+  <div class="toc-item"><div class="toc-num">9</div><div class="toc-title">Configuration Loader</div><div class="toc-file">config/config.go</div></div>
+  <div class="toc-item"><div class="toc-num">10</div><div class="toc-title">Logger Setup (Uber Zap)</div><div class="toc-file">internal/logger/logger.go</div></div>
+  <div class="toc-item"><div class="toc-num">11</div><div class="toc-title">Data Models (Request &amp; Response shapes)</div><div class="toc-file">internal/models/user.go</div></div>
+  <div class="toc-item"><div class="toc-num">12</div><div class="toc-title">Validator Setup (Custom date rules)</div><div class="toc-file">internal/handler/validator.go</div></div>
+  <div class="toc-item"><div class="toc-num">13</div><div class="toc-title">Repository Layer (Database access)</div><div class="toc-file">internal/repository/user_repository.go</div></div>
+  <div class="toc-item"><div class="toc-num">14</div><div class="toc-title">Service Layer (Business logic + Age calculation)</div><div class="toc-file">internal/service/user_service.go</div></div>
+  <div class="toc-item"><div class="toc-num">15</div><div class="toc-title">Unit Tests (Automated age calculation tests)</div><div class="toc-file">internal/service/user_service_test.go</div></div>
+  <div class="toc-item"><div class="toc-num">16</div><div class="toc-title">HTTP Handlers (Receives web requests)</div><div class="toc-file">internal/handler/user_handler.go</div></div>
+  <div class="toc-item"><div class="toc-num">17</div><div class="toc-title">Middleware (Request tracking &amp; logging)</div><div class="toc-file">internal/middleware/middleware.go</div></div>
+  <div class="toc-item"><div class="toc-num">18</div><div class="toc-title">Routes (URL mapping)</div><div class="toc-file">internal/routes/routes.go</div></div>
+  <div class="toc-item"><div class="toc-num">19</div><div class="toc-title">Main Entry Point (Where everything starts)</div><div class="toc-file">cmd/server/main.go</div></div>
+  <div class="toc-item"><div class="toc-num">20</div><div class="toc-title">Dockerfile (Container packaging)</div><div class="toc-file">Dockerfile</div></div>
+  <div class="toc-item"><div class="toc-num">21</div><div class="toc-title">Docker Compose (Multi-service orchestration)</div><div class="toc-file">docker-compose.yml</div></div>
+</div>
+
+<!-- ===== CHAPTER 1: BIG PICTURE ===== -->
+<div class="chapter">
+  <div class="chapter-header">
+    <div class="chapter-num">Chapter 1</div>
+    <div class="chapter-title">🌍 What is this project?</div>
+    <div class="chapter-subtitle">Understanding the big picture before diving into code</div>
+  </div>
+
+  <div class="section-intro">
+    Think of this project as a digital <strong>phonebook for users</strong>. Instead of storing phone numbers, we store each user's <strong>name</strong> and <strong>date of birth (DOB)</strong>. Anyone can ask our API: "Who is user #1?" and we'll respond with their name, birthday, and <em>automatically calculated age</em>.
+  </div>
+
+  <h3>What is an API?</h3>
+  <div class="analogy-box">
+    <div class="label">🍕 Real-World Analogy</div>
+    <p>An API is like a <strong>waiter at a restaurant</strong>. You (the client) sit at your table. The kitchen (database) has all the food (data). You don't go into the kitchen yourself — you tell the waiter what you want. The waiter goes to the kitchen, gets your food, and brings it back. Our Go application IS the waiter.</p>
+  </div>
+
+  <h3>What is REST?</h3>
+  <p>REST (Representational State Transfer) is a set of <strong>rules for how APIs should behave</strong>. It uses standard HTTP methods:</p>
+  <div class="info-grid">
+    <div class="info-card"><h4>GET</h4><p>Fetch/Read data. Like asking "show me user #1"</p></div>
+    <div class="info-card"><h4>POST</h4><p>Create new data. Like saying "add a new user named Alice"</p></div>
+    <div class="info-card"><h4>PUT</h4><p>Update existing data. Like saying "change Alice's name to Alice Updated"</p></div>
+    <div class="info-card"><h4>DELETE</h4><p>Remove data. Like saying "remove user #1 from the database"</p></div>
+  </div>
+
+  <h3>How does a request flow through our application?</h3>
+  <div class="flow-diagram">
+    <div class="flow-step">🌐 HTTP Request<br><small>from browser/curl</small></div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step">🛡️ Middleware<br><small>RequestID + Logger</small></div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step">🎯 Handler<br><small>Parses &amp; validates</small></div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step">⚙️ Service<br><small>Business logic</small></div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step">🗄️ Repository<br><small>Database access</small></div>
+    <span class="flow-arrow">→</span>
+    <div class="flow-step">🐘 PostgreSQL<br><small>Data storage</small></div>
+  </div>
+  <p style="text-align:center;color:#64748b;font-size:13px">The response travels back through the same chain in reverse order</p>
+
+  <h3>The Tech Stack — What tools we used and WHY</h3>
+  <table class="summary-table">
+    <tr><th>Tool</th><th>What it is</th><th>Why we use it</th></tr>
+    <tr><td><strong>Go (Golang)</strong></td><td>Programming language made by Google</td><td>Super fast, simple syntax, great for web servers</td></tr>
+    <tr><td><strong>GoFiber</strong></td><td>Web framework for Go</td><td>Fast, Express.js-like API for building routes easily</td></tr>
+    <tr><td><strong>PostgreSQL</strong></td><td>Relational database</td><td>Stores our user data permanently on disk</td></tr>
+    <tr><td><strong>SQLC</strong></td><td>SQL-to-Go code generator</td><td>Converts SQL queries into type-safe Go functions automatically</td></tr>
+    <tr><td><strong>pgx/v5</strong></td><td>PostgreSQL driver for Go</td><td>Lets Go talk to PostgreSQL efficiently with connection pooling</td></tr>
+    <tr><td><strong>Uber Zap</strong></td><td>Structured logging library</td><td>Prints colorful, structured log messages with timestamps</td></tr>
+    <tr><td><strong>go-playground/validator</strong></td><td>Input validation library</td><td>Automatically checks that incoming data follows our rules</td></tr>
+    <tr><td><strong>Docker</strong></td><td>Container platform</td><td>Packages our app so it runs identically on any machine</td></tr>
+  </table>
+</div>
+
+<!-- ===== CHAPTER 2: PROJECT STRUCTURE ===== -->
+<div class="chapter">
+  <div class="chapter-header">
+    <div class="chapter-num">Chapter 2</div>
+    <div class="chapter-title">📁 Project Structure</div>
+    <div class="chapter-subtitle">How we organized our code and WHY each folder exists</div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">📂 Directory Tree</div>
+    <pre>UserManagement/
+├── cmd/
+│   └── server/
+│       └── main.go          ← WHERE THE APP STARTS (entry point)
+├── config/
+│   └── config.go            ← Reads settings like PORT and DATABASE_URL
+├── db/
+│   ├── migrations/          ← SQL scripts that CREATE our database tables
+│   │   ├── 000001_create_users_table.up.sql
+│   │   └── 000001_create_users_table.down.sql
+│   ├── query/
+│   │   └── users.sql        ← SQL queries that SQLC reads to generate Go code
+│   ├── sqlc/                ← AUTO-GENERATED Go code (DO NOT EDIT manually)
+│   │   ├── db.go
+│   │   ├── models.go
+│   │   └── users.sql.go
+│   └── migrations.go        ← Go code that RUNS the SQL migrations on startup
+├── internal/
+│   ├── handler/             ← HTTP layer: receives requests, sends responses
+│   │   ├── user_handler.go
+│   │   └── validator.go
+│   ├── logger/              ← Logging configuration (Uber Zap)
+│   │   └── logger.go
+│   ├── middleware/          ← Code that runs BEFORE every request handler
+│   │   └── middleware.go
+│   ├── models/              ← Data shapes (what JSON looks like)
+│   │   └── user.go
+│   ├── repository/          ← Database access layer
+│   │   └── user_repository.go
+│   ├── routes/              ← URL path definitions
+│   │   └── routes.go
+│   └── service/             ← Business logic (age calculation lives here)
+│       ├── user_service.go
+│       └── user_service_test.go
+├── Dockerfile               ← Instructions to build a Docker container
+├── docker-compose.yml       ← Orchestrates multiple containers together
+├── go.mod                   ← Project dependencies list
+├── go.sum                   ← Checksum verification for dependencies
+└── sqlc.yaml                ← SQLC configuration</pre>
+  </div>
+
+  <div class="concept-box">
+    <div class="label">💡 Why use the "internal" folder?</div>
+    <p>In Go, code inside a folder named <strong>internal</strong> can ONLY be used by code within the same project. It's Go's way of saying "these are private implementation details — other projects cannot import them". This is a Go best practice for organizing large codebases.</p>
+  </div>
+
+  <div class="concept-box">
+    <div class="label">💡 Why separate handler, service, and repository?</div>
+    <p>This is called <strong>Layered Architecture</strong> (also called N-tier or Clean Architecture). Each layer has ONE responsibility:<br>
+    • <strong>Handler</strong> = "Receive the HTTP request, check if it's valid, send the response"<br>
+    • <strong>Service</strong> = "Apply business rules (like calculating age)"<br>
+    • <strong>Repository</strong> = "Talk to the database"<br><br>
+    If you ever swap PostgreSQL for MongoDB, you only change the Repository. The Handler and Service stay the same!</p>
+  </div>
+</div>
+
+<!-- ===== CHAPTER 3: go.mod ===== -->
+<div class="chapter">
+  <div class="chapter-header">
+    <div class="chapter-num">Chapter 3</div>
+    <div class="chapter-title">📦 go.mod — The Dependency Manifest</div>
+    <div class="chapter-subtitle">The file that defines your project and lists all external packages</div>
+    <div class="filepath">go.mod</div>
+  </div>
+
+  <div class="analogy-box">
+    <div class="label">🛒 Analogy</div>
+    <p><strong>go.mod</strong> is like a <strong>shopping list</strong>. When you run <code>go mod download</code>, Go reads this file and downloads all the required packages from the internet — just like ordering everything on your grocery list from an online store.</p>
+  </div>
+
+  <div class="line-explain">
+    <div class="line-row highlight"><div class="line-num">1</div><div class="line-code">module user-management</div><div class="line-desc"><strong>Module name declaration.</strong> This defines the <em>import path prefix</em> for your entire project. When you write <code>import "user-management/internal/service"</code> anywhere in the project, Go knows to look inside THIS project folder. Think of it as your project's unique ID.</div></div>
+    <div class="line-row"><div class="line-num">3</div><div class="line-code">go 1.26.4</div><div class="line-desc"><strong>Minimum Go version.</strong> This tells the Go toolchain "this project requires at least Go version 1.26.4". If someone tries to compile with an older version, they get an error.</div></div>
+    <div class="line-row highlight"><div class="line-num">5-30</div><div class="line-code">require (...)</div><div class="line-desc"><strong>Dependencies block.</strong> Every external package (not part of Go's standard library) that your project uses must be listed here. The format is: <code>package-import-path version</code>. The <code>// indirect</code> comment means this package is not directly imported by your code — it's a dependency OF a dependency.</div></div>
+    <div class="line-row"><div class="line-num">11</div><div class="line-code">github.com/gofiber/fiber/v2 v2.52.13</div><div class="line-desc"><strong>GoFiber web framework.</strong> The HTTP framework we use to build our REST API. <code>v2</code> in the import path means this is major version 2 of the library.</div></div>
+    <div class="line-row highlight"><div class="line-num">15</div><div class="line-code">github.com/jackc/pgx/v5 v5.10.0</div><div class="line-desc"><strong>PostgreSQL driver.</strong> This is the library that lets Go communicate with PostgreSQL databases. <code>pgx</code> is known for being very high-performance.</div></div>
+    <div class="line-row"><div class="line-num">26</div><div class="line-code">go.uber.org/zap v1.28.0</div><div class="line-desc"><strong>Uber Zap logger.</strong> Created by Uber Technologies. It's one of the fastest structured loggers available for Go. "Structured" means log messages are in JSON format with key-value pairs, not just plain text.</div></div>
+    <div class="line-row highlight"><div class="line-num">10</div><div class="line-code">github.com/go-playground/validator/v10 v10.30.3</div><div class="line-desc"><strong>Input validation library.</strong> Allows you to add rules to struct fields using tags like <code>validate:"required,min=1"</code> and then validate an entire struct with one function call.</div></div>
+    <div class="line-row"><div class="line-num">12</div><div class="line-code">github.com/google/uuid v1.6.0</div><div class="line-desc"><strong>UUID generator.</strong> UUID = Universally Unique Identifier. We use this to generate unique request IDs like <code>6fe5ccc0-ac35-4cb3-af8d-78be9e777441</code> for request tracking.</div></div>
+  </div>
+</div>
+
+<!-- ===== CHAPTER 4: sqlc.yaml ===== -->
+<div class="chapter">
+  <div class="chapter-header">
+    <div class="chapter-num">Chapter 4</div>
+    <div class="chapter-title">⚙️ sqlc.yaml — Database Code Generator Config</div>
+    <div class="chapter-subtitle">Tells the SQLC tool how to generate Go code from SQL queries</div>
+    <div class="filepath">sqlc.yaml</div>
+  </div>
+
+  <div class="analogy-box">
+    <div class="label">🤖 Analogy</div>
+    <p>SQLC is like a <strong>robot assistant</strong>. You write SQL queries in plain SQL, and the robot reads them and automatically writes all the Go code needed to run those queries. You never have to write repetitive database boilerplate code by hand. <strong>sqlc.yaml is the instruction manual you give to the robot.</strong></p>
+  </div>
+
+  <div class="line-explain">
+    <div class="line-row highlight"><div class="line-num">1</div><div class="line-code">version: "2"</div><div class="line-desc"><strong>SQLC configuration version.</strong> SQLC has had multiple configuration formats. <code>version: "2"</code> tells SQLC to use its newer, more powerful configuration format (version 2 supports multiple SQL databases in one config).</div></div>
+    <div class="line-row"><div class="line-num">2</div><div class="line-code">sql:</div><div class="line-desc"><strong>SQL configuration block.</strong> Everything indented under this is defining ONE database target. If you had multiple databases (e.g., MySQL AND PostgreSQL), you'd have multiple list items here.</div></div>
+    <div class="line-row highlight"><div class="line-num">3</div><div class="line-code">engine: "postgresql"</div><div class="line-desc"><strong>Database type declaration.</strong> Tells SQLC which database dialect to use. PostgreSQL has slightly different SQL syntax than MySQL. SQLC needs to know which one to target so it generates compatible code.</div></div>
+    <div class="line-row"><div class="line-num">4</div><div class="line-code">schema: "db/migrations"</div><div class="line-desc"><strong>Where the table definitions are.</strong> SQLC reads our <code>.sql</code> migration files here to understand what tables exist and what columns they have. Without this, SQLC wouldn't know that <code>users</code> has columns named <code>id</code>, <code>name</code>, and <code>dob</code>.</div></div>
+    <div class="line-row highlight"><div class="line-num">5</div><div class="line-code">queries: "db/query"</div><div class="line-desc"><strong>Where the SQL queries are.</strong> SQLC reads the <code>users.sql</code> file from this folder. These are the SELECT, INSERT, UPDATE, DELETE statements that SQLC will convert into Go functions.</div></div>
+    <div class="line-row"><div class="line-num">6-10</div><div class="line-code">gen: go: ...</div><div class="line-desc"><strong>Code generation settings.</strong> Tells SQLC to generate Go code (as opposed to TypeScript, Python, etc.). The sub-fields configure how that Go code should look.</div></div>
+    <div class="line-row highlight"><div class="line-num">8</div><div class="line-code">package: "db"</div><div class="line-desc"><strong>Go package name for generated code.</strong> All generated Go files will start with <code>package db</code>. This is what you type in import statements.</div></div>
+    <div class="line-row"><div class="line-num">9</div><div class="line-code">out: "db/sqlc"</div><div class="line-desc"><strong>Output directory.</strong> Generated Go files will be placed in the <code>db/sqlc/</code> folder. When you run <code>sqlc generate</code>, these files appear here automatically.</div></div>
+    <div class="line-row highlight"><div class="line-num">10</div><div class="line-code">sql_package: "pgx/v5"</div><div class="line-desc"><strong>Which PostgreSQL driver to use in generated code.</strong> SQLC can generate code for multiple drivers (lib/pq, pgx/v4, pgx/v5). We use the latest <code>pgx/v5</code> because it's the fastest and most modern.</div></div>
+    <div class="line-row"><div class="line-num">11-13</div><div class="line-code">overrides: ...</div><div class="line-desc"><strong>Type mapping overrides.</strong> By default, SQLC might not know how to represent a PostgreSQL <code>DATE</code> column in Go. We tell it: "whenever you see a <code>date</code> type in the database, use Go's <code>time.Time</code> type". This is crucial for our DOB field.</div></div>
+  </div>
+</div>
+
+<!-- ===== CHAPTER 5: MIGRATIONS ===== -->
+<div class="chapter">
+  <div class="chapter-header">
+    <div class="chapter-num">Chapter 5</div>
+    <div class="chapter-title">🗄️ Database Migrations — Creating the Table</div>
+    <div class="chapter-subtitle">SQL scripts that define and modify the database structure over time</div>
+    <div class="filepath">db/migrations/000001_create_users_table.up.sql</div>
+  </div>
+
+  <div class="analogy-box">
+    <div class="label">🏗️ Analogy</div>
+    <p>A <strong>migration</strong> is like a <strong>construction blueprint change order</strong>. The <code>.up.sql</code> file says "build this structure". The <code>.down.sql</code> file says "tear it down if something goes wrong". The number prefix <code>000001</code> means this is migration #1 — later changes would be <code>000002</code>, <code>000003</code>, etc., keeping a history.</p>
+  </div>
+
+  <h3>Up Migration (000001_create_users_table.up.sql)</h3>
+  <div class="line-explain">
+    <div class="line-row highlight"><div class="line-num">1</div><div class="line-code">CREATE TABLE IF NOT EXISTS users (</div><div class="line-desc"><strong>Create the users table.</strong> <code>CREATE TABLE</code> is SQL for "make a new table". <code>IF NOT EXISTS</code> is a safety guard — if you run this twice by accident, it won't crash. It'll just do nothing the second time. <code>users</code> is the table name.</div></div>
+    <div class="line-row"><div class="line-num">2</div><div class="line-code">id SERIAL PRIMARY KEY,</div><div class="line-desc"><strong>Auto-incrementing unique ID column.</strong> <code>SERIAL</code> = PostgreSQL automatically assigns the next number (1, 2, 3, ...) every time a new row is inserted. <code>PRIMARY KEY</code> = this column uniquely identifies each row. No two users can have the same ID.</div></div>
+    <div class="line-row highlight"><div class="line-num">3</div><div class="line-code">name TEXT NOT NULL,</div><div class="line-desc"><strong>Name column.</strong> <code>TEXT</code> = stores any length of text (string). <code>NOT NULL</code> = this field is REQUIRED. If you try to insert a user without a name, PostgreSQL will reject it with an error.</div></div>
+    <div class="line-row"><div class="line-num">4</div><div class="line-code">dob DATE NOT NULL</div><div class="line-desc"><strong>Date of birth column.</strong> <code>DATE</code> is a special PostgreSQL type that stores calendar dates in <code>YYYY-MM-DD</code> format (e.g., <code>1990-05-10</code>). Unlike <code>TIMESTAMP</code> which includes time, <code>DATE</code> is just the date. <code>NOT NULL</code> means it's required.</div></div>
+    <div class="line-row highlight"><div class="line-num">5</div><div class="line-code">);</div><div class="line-desc"><strong>End of CREATE TABLE statement.</strong> The semicolon <code>;</code> terminates the SQL statement.</div></div>
+  </div>
+
+  <h3>Down Migration (000001_create_users_table.down.sql)</h3>
+  <div class="line-explain">
+    <div class="line-row highlight"><div class="line-num">1</div><div class="line-code">DROP TABLE IF EXISTS users;</div><div class="line-desc"><strong>Delete the users table entirely.</strong> <code>DROP TABLE</code> = completely removes the table AND all its data. <code>IF EXISTS</code> = don't crash if the table was already deleted. This is the "undo" for our up migration. Running this wipes all user data!</div></div>
+  </div>
+
+  <div class="warning">
+    <div class="label">⚠️ IMPORTANT for Beginners</div>
+    <p>In real production systems, you NEVER delete data in down migrations — you only undo structural changes. Always be careful with <code>DROP TABLE</code>!</p>
+  </div>
+</div>
+
+<!-- ===== CHAPTER 6: SQL QUERIES ===== -->
+<div class="chapter">
+  <div class="chapter-header">
+    <div class="chapter-num">Chapter 6</div>
+    <div class="chapter-title">🔍 SQL Queries — What We Ask the Database</div>
+    <div class="chapter-subtitle">The SQL commands that SQLC converts into Go functions</div>
+    <div class="filepath">db/query/users.sql</div>
+  </div>
+
+  <div class="section-intro">
+    These are the <strong>raw SQL queries</strong> we want to run against the database. SQLC reads these, combines them with the schema, and writes type-safe Go functions for each one. The special <code>-- name: ... :one/:many/:exec</code> comments are SQLC directives — they tell SQLC what to name the function and how many rows it returns.
+  </div>
+
+  <div class="line-explain">
+    <div class="line-row highlight"><div class="line-num">1</div><div class="line-code">-- name: CreateUser :one</div><div class="line-desc"><strong>SQLC directive comment.</strong> The double-dash <code>--</code> makes it a SQL comment (ignored by the database). But SQLC reads it! <code>name: CreateUser</code> = the generated Go function will be called <code>CreateUser()</code>. <code>:one</code> = this query returns exactly ONE row.</div></div>
+    <div class="line-row"><div class="line-num">2</div><div class="line-code">INSERT INTO users (name, dob)</div><div class="line-desc"><strong>Insert a new row into the users table.</strong> <code>INSERT INTO</code> is SQL for "add a new record". We specify which columns we're providing values for: <code>name</code> and <code>dob</code>. We don't specify <code>id</code> because PostgreSQL generates it automatically.</div></div>
+    <div class="line-row highlight"><div class="line-num">3</div><div class="line-code">VALUES ($1, $2)</div><div class="line-desc"><strong>Placeholder parameters.</strong> <code>$1</code> and <code>$2</code> are parameter placeholders. The actual values are passed in from Go code. <code>$1</code> = first parameter (name), <code>$2</code> = second parameter (dob). This pattern prevents SQL injection attacks!</div></div>
+    <div class="line-row"><div class="line-num">4</div><div class="line-code">RETURNING id, name, dob;</div><div class="line-desc"><strong>Return the newly created row.</strong> After inserting, immediately fetch back the complete row including the auto-generated <code>id</code>. Without <code>RETURNING</code>, you'd have to do a separate SELECT query to get the ID back.</div></div>
+    <div class="line-row highlight"><div class="line-num">6</div><div class="line-code">-- name: GetUserByID :one</div><div class="line-desc"><strong>SQLC directive for fetching one user.</strong> The generated Go function will be <code>GetUserByID()</code> and it returns a single <code>User</code> struct or an error.</div></div>
+    <div class="line-row"><div class="line-num">7-9</div><div class="line-code">SELECT id, name, dob FROM users WHERE id = $1;</div><div class="line-desc"><strong>Find a specific user by ID.</strong> <code>SELECT id, name, dob</code> = get these specific columns (not <code>*</code> which would get all columns — being explicit is better practice). <code>FROM users</code> = from the users table. <code>WHERE id = $1</code> = only return the row where the id matches our parameter.</div></div>
+    <div class="line-row highlight"><div class="line-num">11</div><div class="line-code">-- name: UpdateUser :one</div><div class="line-desc"><strong>SQLC directive for updating a user.</strong> Returns one row (the updated user) after the update.</div></div>
+    <div class="line-row"><div class="line-num">12-15</div><div class="line-code">UPDATE users SET name=$1, dob=$2 WHERE id=$3 RETURNING...</div><div class="line-desc"><strong>Update existing user data.</strong> <code>UPDATE users</code> = modify a row. <code>SET name=$1, dob=$2</code> = change these columns to the new values. <code>WHERE id=$3</code> = ONLY update the row with this ID. Without WHERE, you'd update ALL rows! <code>RETURNING</code> gives us back the updated data.</div></div>
+    <div class="line-row highlight"><div class="line-num">17</div><div class="line-code">-- name: DeleteUser :exec</div><div class="line-desc"><strong>SQLC directive for deletion.</strong> <code>:exec</code> means this query doesn't return any rows — it just executes a command. The generated Go function returns only an error (or nil if successful).</div></div>
+    <div class="line-row"><div class="line-num">18-19</div><div class="line-code">DELETE FROM users WHERE id = $1;</div><div class="line-desc"><strong>Delete a specific user.</strong> <code>DELETE FROM users</code> = remove a row. <code>WHERE id = $1</code> = ONLY the row with this specific ID. Again, without WHERE, you'd delete EVERY user!</div></div>
+    <div class="line-row highlight"><div class="line-num">21</div><div class="line-code">-- name: ListUsers :many</div><div class="line-desc"><strong>SQLC directive returning multiple rows.</strong> <code>:many</code> = this query can return 0, 1, or many rows. The generated Go function returns a slice (<code>[]User</code>) instead of a single <code>User</code>.</div></div>
+    <div class="line-row"><div class="line-num">22-24</div><div class="line-code">SELECT id, name, dob FROM users ORDER BY id ASC;</div><div class="line-desc"><strong>Get all users sorted by ID.</strong> No <code>WHERE</code> clause = get ALL rows. <code>ORDER BY id ASC</code> = sort results from smallest ID to largest (<code>ASC</code> = ascending). This ensures consistent ordering.</div></div>
+    <div class="line-row highlight"><div class="line-num">26-30</div><div class="line-code">...LIMIT $1 OFFSET $2;</div><div class="line-desc"><strong>Paginated query.</strong> <code>LIMIT $1</code> = return at most this many rows (e.g., 10). <code>OFFSET $2</code> = skip this many rows from the beginning. For page 2 with limit 10: LIMIT=10, OFFSET=10. This is how pagination works in SQL!</div></div>
+  </div>
+</div>
+
+<!-- ===== CHAPTER 7: SQLC GENERATED CODE ===== -->
+<div class="chapter">
+  <div class="chapter-header">
+    <div class="chapter-num">Chapter 7</div>
+    <div class="chapter-title">🤖 SQLC Generated Code — Auto-written Go</div>
+    <div class="chapter-subtitle">Code that SQLC writes for you — never edit these files manually!</div>
+    <div class="filepath">db/sqlc/models.go &amp; db/sqlc/db.go &amp; db/sqlc/users.sql.go</div>
+  </div>
+
+  <div class="callout">
+    <div class="label">✅ Key Insight</div>
+    <p>You <strong>never write these files yourself</strong>. Every time you run <code>sqlc generate</code>, SQLC regenerates them from scratch. If you manually edit them, your changes get overwritten next time. The first line of every generated file says: <code>// Code generated by sqlc. DO NOT EDIT.</code></p>
+  </div>
+
+  <h3>models.go — The Go struct matching our database table</h3>
+  <div class="line-explain">
+    <div class="line-row highlight"><div class="line-num">1</div><div class="line-code">// Code generated by sqlc. DO NOT EDIT.</div><div class="line-desc"><strong>Auto-generated warning comment.</strong> This literally tells you and every developer: don't touch this file manually. SQLC overwrites it every time you run <code>sqlc generate</code>.</div></div>
+    <div class="line-row"><div class="line-num">5</div><div class="line-code">package db</div><div class="line-desc"><strong>Package name.</strong> This matches what we set in <code>sqlc.yaml</code>: <code>package: "db"</code>. All files in this folder belong to the <code>db</code> package. When you import them, you write <code>import db "user-management/db/sqlc"</code>.</div></div>
+    <div class="line-row highlight"><div class="line-num">11-15</div><div class="line-code">type User struct { ID int32; Name string; Dob time.Time }</div><div class="line-desc"><strong>The User struct — mirrors the database table.</strong> A <code>struct</code> in Go is a blueprint for a data object (like a class in other languages). SQLC created this to exactly match our <code>users</code> table: <code>ID</code> ↔ <code>id SERIAL</code>, <code>Name</code> ↔ <code>name TEXT</code>, <code>Dob</code> ↔ <code>dob DATE</code> (as <code>time.Time</code> because of our override in sqlc.yaml).</div></div>
+  </div>
+
+  <h3>users.sql.go — Generated Go functions from SQL queries</h3>
+  <div class="line-explain">
+    <div class="line-row highlight"><div class="line-num">13-17</div><div class="line-code">const createUser = `INSERT INTO users...`</div><div class="line-desc"><strong>SQL stored as a Go constant.</strong> SQLC copies our SQL query into a Go constant string. The backtick (<code>`</code>) creates a "raw string literal" in Go, allowing multi-line strings and avoiding the need to escape quotes.</div></div>
+    <div class="line-row"><div class="line-num">19-22</div><div class="line-code">type CreateUserParams struct { Name string; Dob time.Time }</div><div class="line-desc"><strong>Parameter struct for CreateUser.</strong> SQLC created this struct to hold the <code>$1</code> and <code>$2</code> parameters for our INSERT query. Instead of passing loose variables, you pass a nice organized struct. <code>Name</code> maps to <code>$1</code>, <code>Dob</code> maps to <code>$2</code>.</div></div>
+    <div class="line-row highlight"><div class="line-num">24-29</div><div class="line-code">func (q *Queries) CreateUser(ctx, arg) (User, error)</div><div class="line-desc"><strong>The generated CreateUser function.</strong> This is a METHOD on the <code>Queries</code> struct (<code>(q *Queries)</code> means it belongs to Queries). It takes a context and parameters, runs the SQL, scans the returned row into a <code>User</code> struct, and returns it. This is what you call from your repository code!</div></div>
+    <div class="line-row"><div class="line-num">60-78</div><div class="line-code">func (q *Queries) ListUsers(ctx) ([]User, error)</div><div class="line-desc"><strong>List function iterates through rows.</strong> Notice <code>rows.Close()</code> with <code>defer</code> (runs at end of function), and the <code>for rows.Next()</code> loop. This is the standard Go pattern for reading multiple rows from a database: iterate through each row, scan its columns into a struct, append to a slice, return the slice.</div></div>
+    <div class="line-row highlight"><div class="line-num">65</div><div class="line-code">defer rows.Close()</div><div class="line-desc"><strong>Defer closes the rows cursor.</strong> <code>defer</code> in Go schedules a function call to happen when the surrounding function returns. <code>rows.Close()</code> releases the database connection. By deferring it, we guarantee cleanup happens even if an error occurs mid-loop.</div></div>
+  </div>
+</div>
+
+<!-- ===== CHAPTER 8: MIGRATIONS.GO ===== -->
+<div class="chapter">
+  <div class="chapter-header">
+    <div class="chapter-num">Chapter 8</div>
+    <div class="chapter-title">🚀 Migration Runner — Auto-runs Schema on Startup</div>
+    <div class="chapter-subtitle">The Go code that automatically applies pending database migrations when the server starts</div>
+    <div class="filepath">db/migrations.go</div>
+  </div>
+
+  <div class="concept-box">
+    <div class="label">💡 Why do we need this?</div>
+    <p>In production, you can't manually run SQL scripts on the database server. Instead, we embed the SQL files INTO the compiled Go binary and run them automatically when the app starts. This means the app is <strong>self-migrating</strong> — deploy it and the database is automatically up to date.</p>
+  </div>
+
+  <div class="line-explain">
+    <div class="line-row highlight"><div class="line-num">1</div><div class="line-code">package db</div><div class="line-desc"><strong>Package declaration.</strong> This file belongs to the <code>db</code> package. Notice it's in the <code>db/</code> folder, not <code>db/sqlc/</code>. This is handwritten code (unlike the sqlc folder which is auto-generated).</div></div>
+    <div class="line-row"><div class="line-num">3-11</div><div class="line-code">import ("context" "embed" "fmt" "strings" ...)</div><div class="line-desc"><strong>Imports.</strong> <code>context</code> = for cancellation/deadline propagation. <code>embed</code> = Go's built-in package for embedding files into the binary. <code>fmt</code> = formatted printing and error creation. <code>strings</code> = string operations like <code>HasSuffix</code>. <code>pgxpool</code> = database connection pool. <code>zap</code> = logger.</div></div>
+    <div class="line-row highlight"><div class="line-num">13</div><div class="line-code">//go:embed migrations/*.sql</div><div class="line-desc"><strong>Go embed directive.</strong> This special comment (NOT a regular comment — Go treats <code>//go:embed</code> as a compiler instruction) tells Go to bundle ALL <code>.sql</code> files from the <code>migrations/</code> folder INTO the compiled binary. The SQL files become part of the executable itself!</div></div>
+    <div class="line-row"><div class="line-num">14</div><div class="line-code">var migrationFS embed.FS</div><div class="line-desc"><strong>Embedded filesystem variable.</strong> <code>embed.FS</code> is a virtual filesystem. After compilation, <code>migrationFS</code> holds all the embedded SQL file contents in memory. You can read files from it using standard filesystem operations.</div></div>
+    <div class="line-row highlight"><div class="line-num">17</div><div class="line-code">func RunMigrations(ctx context.Context, pool *pgxpool.Pool, logger *zap.Logger) error</div><div class="line-desc"><strong>Function signature.</strong> This function takes three inputs: <code>ctx</code> (context for cancellation), <code>pool</code> (database connection pool — the <code>*</code> means it's a pointer, not a copy), <code>logger</code> (for logging). It returns <code>error</code> (nil means success, non-nil means something went wrong).</div></div>
+    <div class="line-row"><div class="line-num">20-29</div><div class="line-code">CREATE TABLE IF NOT EXISTS schema_migrations...</div><div class="line-desc"><strong>Migration tracking table.</strong> Before running any migrations, we create a special table called <code>schema_migrations</code> that records WHICH migrations have been applied. This prevents running the same migration twice (which would cause errors). Each migration gets a version number stored here.</div></div>
+    <div class="line-row highlight"><div class="line-num">32</div><div class="line-code">entries, err := migrationFS.ReadDir("migrations")</div><div class="line-desc"><strong>List files in the embedded directory.</strong> <code>ReadDir</code> returns a slice of directory entries (file listings) from our embedded filesystem. <code>err</code> captures any error. The <code>err != nil</code> check below is Go's idiomatic error handling pattern — always check for errors!</div></div>
+    <div class="line-row"><div class="line-num">37-40</div><div class="line-code">if entry.IsDir() || !strings.HasSuffix(entry.Name(), ".up.sql") { continue }</div><div class="line-desc"><strong>Skip non-migration files.</strong> We loop through all files. <code>entry.IsDir()</code> = skip subdirectories. <code>!strings.HasSuffix(..., ".up.sql")</code> = skip files that don't end in <code>.up.sql</code> (this skips <code>.down.sql</code> files). <code>continue</code> = skip to the next iteration.</div></div>
+    <div class="line-row highlight"><div class="line-num">43</div><div class="line-code">_, err := fmt.Sscanf(entry.Name(), "%d_", &amp;version)</div><div class="line-desc"><strong>Extract version number from filename.</strong> <code>fmt.Sscanf</code> parses a formatted string. The format <code>"%d_"</code> means "read an integer followed by underscore". From filename <code>000001_create_users_table.up.sql</code>, it extracts <code>1</code> as the version number. The <code>&amp;version</code> is a pointer — Sscanf writes the result INTO the variable.</div></div>
+    <div class="line-row"><div class="line-num">49-53</div><div class="line-code">pool.QueryRow(...).Scan(&amp;exists)</div><div class="line-desc"><strong>Check if migration already ran.</strong> Queries the <code>schema_migrations</code> table to see if this version number already exists. <code>EXISTS(SELECT 1 FROM ...)</code> is a SQL trick that returns <code>true</code> if any matching rows exist, <code>false</code> otherwise. <code>Scan(&amp;exists)</code> reads the result into our boolean variable.</div></div>
+    <div class="line-row highlight"><div class="line-num">67</div><div class="line-code">tx, err := pool.Begin(ctx)</div><div class="line-desc"><strong>Start a database transaction.</strong> A <strong>transaction</strong> is a group of database operations that all succeed together or all fail together. If the migration SQL runs but recording the version number fails, the transaction rolls back BOTH changes — keeping the database consistent.</div></div>
+    <div class="line-row"><div class="line-num">71</div><div class="line-code">defer tx.Rollback(ctx)</div><div class="line-desc"><strong>Safety rollback.</strong> If anything goes wrong before <code>tx.Commit()</code> is called, this deferred <code>Rollback()</code> will undo any partial changes. After a successful <code>Commit()</code>, calling <code>Rollback()</code> is a no-op (harmless), so this is always safe to have.</div></div>
+    <div class="line-row highlight"><div class="line-num">77</div><div class="line-code">tx.Exec(ctx, "INSERT INTO schema_migrations (version) VALUES ($1)", version)</div><div class="line-desc"><strong>Record that this migration was applied.</strong> After running the migration SQL, we insert the version number into <code>schema_migrations</code>. Next time the app starts, it'll see this version is already applied and skip it.</div></div>
+    <div class="line-row"><div class="line-num">81</div><div class="line-code">if err := tx.Commit(ctx); err != nil {</div><div class="line-desc"><strong>Commit the transaction.</strong> <code>Commit</code> finalizes all the changes made within the transaction, making them permanent. Only if Commit succeeds do we log "Successfully applied migration". If Commit fails, the deferred Rollback undoes everything.</div></div>
+  </div>
+</div>
+
+<!-- ===== CHAPTER 9: CONFIG ===== -->
+<div class="chapter">
+  <div class="chapter-header">
+    <div class="chapter-num">Chapter 9</div>
+    <div class="chapter-title">⚙️ Configuration — Reading App Settings</div>
+    <div class="chapter-subtitle">How the application reads settings like the port and database URL</div>
+    <div class="filepath">config/config.go</div>
+  </div>
+
+  <div class="analogy-box">
+    <div class="label">🎛️ Analogy</div>
+    <p>Config is like the <strong>settings panel of an app</strong>. Instead of hardcoding <code>3000</code> directly into your code (which means changing the code every time you deploy to a different environment), you put settings in environment variables. The same binary can run on your laptop (port 3000) AND in production (port 8080) without recompiling.</p>
+  </div>
+
+  <div class="line-explain">
+    <div class="line-row highlight"><div class="line-num">1</div><div class="line-code">package config</div><div class="line-desc"><strong>Package config.</strong> This file is in the <code>config</code> package. Go packages are like namespaces — all code in this folder shares this package name, and other files import it as <code>"user-management/config"</code>.</div></div>
+    <div class="line-row"><div class="line-num">3-5</div><div class="line-code">import ("os")</div><div class="line-desc"><strong>Import the os package.</strong> <code>os</code> is part of Go's standard library (built-in, no download needed). It provides access to operating system features, including reading environment variables with <code>os.Getenv()</code>.</div></div>
+    <div class="line-row highlight"><div class="line-num">8-11</div><div class="line-code">type Config struct { Port string; DatabaseURL string }</div><div class="line-desc"><strong>Config struct definition.</strong> A <code>struct</code> groups related data together. Our Config has two fields: <code>Port</code> (which port the server listens on, e.g., "3000") and <code>DatabaseURL</code> (the full connection string to PostgreSQL). Both are <code>string</code> type.</div></div>
+    <div class="line-row"><div class="line-num">14</div><div class="line-code">func Load() *Config {</div><div class="line-desc"><strong>Load function returns a Config pointer.</strong> <code>func</code> = function. <code>Load()</code> = function name (no parameters). <code>*Config</code> = the return type is a POINTER to a Config struct. The asterisk means "pointer to" — we return a reference to the struct, not a copy of it (more memory efficient).</div></div>
+    <div class="line-row highlight"><div class="line-num">15</div><div class="line-code">port := os.Getenv("PORT")</div><div class="line-desc"><strong>Read the PORT environment variable.</strong> <code>os.Getenv("PORT")</code> reads the environment variable named <code>PORT</code>. If it exists (e.g., <code>export PORT=8080</code>), it returns <code>"8080"</code>. If it doesn't exist, it returns an empty string <code>""</code>. The <code>:=</code> is Go's short variable declaration (creates a new variable AND assigns its type automatically).</div></div>
+    <div class="line-row"><div class="line-num">16-18</div><div class="line-code">if port == "" { port = "3000" }</div><div class="line-desc"><strong>Default value fallback.</strong> If <code>PORT</code> wasn't set (empty string), default to <code>"3000"</code>. This pattern — "try to read from environment, fall back to a default" — is standard practice for configurable applications.</div></div>
+    <div class="line-row highlight"><div class="line-num">26-29</div><div class="line-code">return &amp;Config{ Port: port, DatabaseURL: dbURL }</div><div class="line-desc"><strong>Create and return Config struct.</strong> The <code>&amp;</code> before <code>Config{}</code> creates a pointer to the newly created struct. The <code>Port: port</code> syntax is Go's named field initialization — you explicitly say which field gets which value, making it very readable.</div></div>
+  </div>
+</div>
+
+<!-- ===== CHAPTER 10: LOGGER ===== -->
+<div class="chapter">
+  <div class="chapter-header">
+    <div class="chapter-num">Chapter 10</div>
+    <div class="chapter-title">📋 Logger — Structured Application Logging</div>
+    <div class="chapter-subtitle">Setting up Uber Zap for colorized, structured log output</div>
+    <div class="filepath">internal/logger/logger.go</div>
+  </div>
+
+  <div class="concept-box">
+    <div class="label">💡 Why not just use fmt.Println?</div>
+    <p><code>fmt.Println("Something happened")</code> gives you plain text with no timestamp, no severity level, no machine-readable format. Uber Zap gives you: timestamps, log levels (DEBUG/INFO/WARN/ERROR), structured key-value pairs, extremely fast performance, and in development mode — beautiful colorized output!</p>
+  </div>
+
+  <div class="line-explain">
+    <div class="line-row highlight"><div class="line-num">3-6</div><div class="line-code">import ("go.uber.org/zap" "go.uber.org/zap/zapcore")</div><div class="line-desc"><strong>Import Zap packages.</strong> <code>go.uber.org/zap</code> = the core logging library. <code>go.uber.org/zap/zapcore</code> = lower-level types and interfaces used for configuring encoders (how log messages are formatted).</div></div>
+    <div class="line-row"><div class="line-num">9</div><div class="line-code">var Log *zap.Logger</div><div class="line-desc"><strong>Package-level global logger variable.</strong> <code>var</code> declares a package-level variable (accessible from any file in the <code>logger</code> package). <code>*zap.Logger</code> is a pointer to a Zap Logger. <code>Log</code> is initially <code>nil</code> — it gets set when <code>Init()</code> is called.</div></div>
+    <div class="line-row highlight"><div class="line-num">13</div><div class="line-code">config := zap.NewDevelopmentConfig()</div><div class="line-desc"><strong>Create a development logger configuration.</strong> Zap has two modes: Development (human-friendly, colorized, includes stack traces on errors) and Production (JSON format, minimal overhead, no stack traces). <code>NewDevelopmentConfig()</code> starts you with development defaults.</div></div>
+    <div class="line-row"><div class="line-num">15</div><div class="line-code">config.EncoderConfig.EncodeLevel = zapcore.CapitalColorLevelEncoder</div><div class="line-desc"><strong>Enable colorized log levels.</strong> The default encoder prints log levels like "info", "error" in plain text. <code>CapitalColorLevelEncoder</code> makes them <span style="color:#10b981">INFO</span>, <span style="color:#f59e0b">WARN</span>, <span style="color:#ef4444">ERROR</span> in capital letters with terminal colors — much easier to scan!</div></div>
+    <div class="line-row highlight"><div class="line-num">18</div><div class="line-code">Log, err = config.Build()</div><div class="line-desc"><strong>Build the logger instance.</strong> <code>Build()</code> applies all the configuration and creates the actual <code>*zap.Logger</code> instance. Note: we write <code>Log, err =</code> (not <code>:=</code>) because <code>Log</code> was already declared on line 9 — we're assigning to it, not creating a new variable.</div></div>
+    <div class="line-row"><div class="line-num">19-21</div><div class="line-code">if err != nil { panic(...) }</div><div class="line-desc"><strong>Panic on logger failure.</strong> <code>panic()</code> in Go immediately stops the program and prints a stack trace. We use it here (instead of returning an error) because if the logger fails to initialize, we can't even log the error — the app is fundamentally broken. Panicking early is the right call here.</div></div>
+  </div>
+</div>
+
+<!-- ===== CHAPTER 11: MODELS ===== -->
+<div class="chapter">
+  <div class="chapter-header">
+    <div class="chapter-num">Chapter 11</div>
+    <div class="chapter-title">📐 Models — Data Shape Definitions</div>
+    <div class="chapter-subtitle">Go structs that define what JSON looks like going in and coming out</div>
+    <div class="filepath">internal/models/user.go</div>
+  </div>
+
+  <div class="concept-box">
+    <div class="label">💡 Why two different types?</div>
+    <p>We have <strong>request models</strong> (what the client sends us) and <strong>response models</strong> (what we send back). They're different because: (1) We don't want the client sending an <code>id</code> — that's auto-generated. (2) The GET response includes <code>age</code> which isn't stored — it's calculated. Having separate types for each makes this explicit and safe.</p>
+  </div>
+
+  <div class="line-explain">
+    <div class="line-row highlight"><div class="line-num">4-7</div><div class="line-code">type CreateUserRequest struct { Name string `json:"name" validate:"required,min=1,max=100"` DOB string `json:"dob" validate:"required,datetime=2006-01-02,past_date"` }</div><div class="line-desc"><strong>Create User request struct with validation tags.</strong> Struct tags (backtick sections) are metadata attached to fields. <code>json:"name"</code> = when parsing JSON, the field labeled <code>"name"</code> maps to this Go field. <code>validate:"required,min=1,max=100"</code> = validation rules: field must exist, must be at least 1 character, at most 100.</div></div>
+    <div class="line-row"><div class="line-num">6</div><div class="line-code">DOB string `json:"dob" validate:"required,datetime=2006-01-02,past_date"`</div><div class="line-desc"><strong>DOB field with format and custom validation.</strong> <code>datetime=2006-01-02</code> = the date MUST match this exact format. <code>2006-01-02</code> is Go's unique reference date for date formats (January 2nd, 2006 at 3:04:05 PM — Go uses this as a mnemonic). <code>past_date</code> is our CUSTOM validator that rejects future dates.</div></div>
+    <div class="line-row highlight"><div class="line-num">16-20</div><div class="line-code">type UserResponse struct { ID int32; Name string; DOB string }</div><div class="line-desc"><strong>Simple create/update response (no age).</strong> When you CREATE or UPDATE a user, we return their stored data: ID, Name, DOB. No age here because the spec only shows age in GET responses. <code>int32</code> is a 32-bit integer (can hold values from -2 billion to +2 billion) — matches the <code>SERIAL</code> type from PostgreSQL.</div></div>
+    <div class="line-row"><div class="line-num">23-28</div><div class="line-code">type UserWithAgeResponse struct { ...; Age int `json:"age"` }</div><div class="line-desc"><strong>Get/List response includes calculated age.</strong> This struct is used for GET and LIST operations. It's identical to UserResponse but adds the <code>Age</code> field. <code>Age int</code> uses Go's plain <code>int</code> type (64-bit on modern systems). We calculate age dynamically in the service layer — it's never stored in the database.</div></div>
+  </div>
+</div>
+
+<!-- ===== CHAPTER 12: VALIDATOR ===== -->
+<div class="chapter">
+  <div class="chapter-header">
+    <div class="chapter-num">Chapter 12</div>
+    <div class="chapter-title">✅ Validator — Input Validation with Custom Rules</div>
+    <div class="chapter-subtitle">Setting up go-playground/validator with a custom "past date" rule</div>
+    <div class="filepath">internal/handler/validator.go</div>
+  </div>
+
+  <div class="line-explain">
+    <div class="line-row highlight"><div class="line-num">10</div><div class="line-code">var Validate *validator.Validate</div><div class="line-desc"><strong>Package-level validator instance.</strong> Like the logger, this is a global variable. Initialized once in <code>InitValidator()</code> and then used by all handler functions. The capital V in <code>Validate</code> makes it exported (public) so other files in the <code>handler</code> package can access it.</div></div>
+    <div class="line-row"><div class="line-num">14</div><div class="line-code">Validate = validator.New()</div><div class="line-desc"><strong>Create a new validator instance.</strong> <code>validator.New()</code> creates a fresh, unconfigured validator. At this point it only has built-in rules like <code>required</code>, <code>min</code>, <code>max</code>, <code>datetime</code>, etc. We then add our custom rule to it.</div></div>
+    <div class="line-row highlight"><div class="line-num">17</div><div class="line-code">_ = Validate.RegisterValidation("past_date", func(fl validator.FieldLevel) bool {</div><div class="line-desc"><strong>Register a custom validation function.</strong> <code>RegisterValidation("past_date", ...)</code> adds a new rule named <code>past_date</code>. Now when we write <code>validate:"past_date"</code> in a struct tag, this function runs. The <code>_ =</code> discards the return value (the error) — since we control the inputs, we know it won't fail.</div></div>
+    <div class="line-row"><div class="line-num">18</div><div class="line-code">dateStr := fl.Field().String()</div><div class="line-desc"><strong>Get the field's value as a string.</strong> <code>fl</code> is the "field level" — it represents the struct field being validated. <code>fl.Field()</code> returns a reflection Value. <code>.String()</code> gets its string representation. This is how validation functions read the field they're checking.</div></div>
+    <div class="line-row highlight"><div class="line-num">19</div><div class="line-code">t, err := time.Parse("2006-01-02", dateStr)</div><div class="line-desc"><strong>Parse the date string.</strong> <code>time.Parse(layout, value)</code> converts a string into a <code>time.Time</code> object. The first argument is the format template (<code>"2006-01-02"</code>), the second is the actual string to parse. If the format doesn't match, <code>err</code> will be non-nil.</div></div>
+    <div class="line-row"><div class="line-num">20-22</div><div class="line-code">if err != nil { return false }</div><div class="line-desc"><strong>Return false if parsing fails.</strong> If we can't parse the date, the validation fails (returns <code>false</code>). This is a safety net — although the <code>datetime=2006-01-02</code> validator should have already caught format errors before this runs.</div></div>
+    <div class="line-row highlight"><div class="line-num">24</div><div class="line-code">return t.Before(time.Now())</div><div class="line-desc"><strong>The actual past-date check.</strong> <code>time.Now()</code> = current date and time. <code>t.Before(...))</code> = returns <code>true</code> if <code>t</code> is earlier than now. So a birthday of "2030-01-01" would return <code>false</code> (it's in the future) → validation fails. "1990-05-10" returns <code>true</code> → validation passes.</div></div>
+  </div>
+</div>
+
+<!-- ===== CHAPTER 13: REPOSITORY ===== -->
+<div class="chapter">
+  <div class="chapter-header">
+    <div class="chapter-num">Chapter 13</div>
+    <div class="chapter-title">🗄️ Repository — The Database Access Layer</div>
+    <div class="chapter-subtitle">An interface + implementation that wraps SQLC queries with clean function signatures</div>
+    <div class="filepath">internal/repository/user_repository.go</div>
+  </div>
+
+  <div class="concept-box">
+    <div class="label">💡 Why have a Repository layer if SQLC already generates code?</div>
+    <p>SQLC generates code tightly coupled to PostgreSQL. The Repository layer adds an <strong>interface</strong> (a contract) on top. This means: (1) You can write unit tests by creating a "fake" repository that returns test data without hitting a real database. (2) If you switch to MySQL, you only change the repository — the service layer is unaffected.</p>
+  </div>
+
+  <div class="line-explain">
+    <div class="line-row highlight"><div class="line-num">12-19</div><div class="line-code">type UserRepository interface { ... }</div><div class="line-desc"><strong>Interface definition.</strong> In Go, an <code>interface</code> defines a set of method SIGNATURES (name + parameters + return types) without any implementation. Any struct that implements ALL these methods automatically satisfies the interface. Think of it as a "contract" — "I promise this thing can do all these operations".</div></div>
+    <div class="line-row"><div class="line-num">13</div><div class="line-code">CreateUser(ctx context.Context, name string, dob time.Time) (db.User, error)</div><div class="line-desc"><strong>Interface method signature.</strong> This says: CreateUser takes a context, a name string, and a time.Time date. It returns a db.User struct and an error. Any struct implementing this interface MUST have a method with EXACTLY this signature — same parameter types, same return types.</div></div>
+    <div class="line-row highlight"><div class="line-num">22-25</div><div class="line-code">type PostgresUserRepository struct { queries *db.Queries; pool *pgxpool.Pool }</div><div class="line-desc"><strong>Concrete implementation struct.</strong> This is the actual struct that IMPLEMENTS the UserRepository interface. It holds: <code>queries</code> (the SQLC Queries object for running SQL) and <code>pool</code> (the database connection pool). The <code>*</code> means these are pointers (no copying, just references).</div></div>
+    <div class="line-row"><div class="line-num">28-33</div><div class="line-code">func NewPostgresUserRepository(pool *pgxpool.Pool) UserRepository { return &amp;PostgresUserRepository{...} }</div><div class="line-desc"><strong>Constructor function.</strong> In Go, there's no <code>new</code> keyword for classes. Instead, by convention you write a function named <code>New...</code> that creates and returns a configured struct. Notice the return type is <code>UserRepository</code> (the INTERFACE), not <code>*PostgresUserRepository</code>. This forces callers to use only interface methods.</div></div>
+    <div class="line-row highlight"><div class="line-num">30</div><div class="line-code">queries: db.New(pool)</div><div class="line-desc"><strong>Create SQLC Queries object.</strong> <code>db.New(pool)</code> is the SQLC-generated constructor that creates a <code>*Queries</code> object backed by our connection pool. All the generated SQL functions (CreateUser, GetUserByID, etc.) are methods on this object.</div></div>
+    <div class="line-row"><div class="line-num">36-41</div><div class="line-code">func (r *PostgresUserRepository) CreateUser(...) (db.User, error) { return r.queries.CreateUser(ctx, db.CreateUserParams{Name: name, Dob: dob}) }</div><div class="line-desc"><strong>Method implementation.</strong> <code>(r *PostgresUserRepository)</code> is the method receiver — this function belongs to PostgresUserRepository. The body just delegates to the SQLC-generated <code>r.queries.CreateUser()</code>, packing the parameters into the <code>CreateUserParams</code> struct that SQLC requires.</div></div>
+  </div>
+</div>
+
+<!-- ===== CHAPTER 14: SERVICE ===== -->
+<div class="chapter">
+  <div class="chapter-header">
+    <div class="chapter-num">Chapter 14</div>
+    <div class="chapter-title">⚙️ Service Layer — Business Logic &amp; Age Calculation</div>
+    <div class="chapter-subtitle">The heart of the application: converting data, calculating ages, handling errors</div>
+    <div class="filepath">internal/service/user_service.go</div>
+  </div>
+
+  <div class="line-explain">
+    <div class="line-row highlight"><div class="line-num">17</div><div class="line-code">ErrUserNotFound = errors.New("user not found")</div><div class="line-desc"><strong>Named error sentinel value.</strong> <code>errors.New()</code> creates a new unique error value. Storing it in a variable <code>ErrUserNotFound</code> lets other code check: <code>errors.Is(err, service.ErrUserNotFound)</code> — a type-safe way to check WHAT kind of error occurred rather than comparing strings (brittle).</div></div>
+    <div class="line-row"><div class="line-num">21-27</div><div class="line-code">type UserService interface { ... }</div><div class="line-desc"><strong>Service interface (same pattern as repository).</strong> Defines what operations the service layer supports. Notice the method signatures use our <strong>model types</strong> (CreateUserRequest, UserResponse) not database types (db.User). The service is the translation layer between the HTTP world and the database world.</div></div>
+    <div class="line-row highlight"><div class="line-num">35-37</div><div class="line-code">func NewDefaultUserService(repo repository.UserRepository) UserService { return &amp;DefaultUserService{repo: repo} }</div><div class="line-desc"><strong>Service constructor with dependency injection.</strong> The service RECEIVES a repository as a parameter — this is called <strong>dependency injection</strong>. The service doesn't create its own database connection. It's given one from outside, making it testable (you can pass a fake repository for tests).</div></div>
+    <div class="line-row"><div class="line-num">41</div><div class="line-code">dob, err := time.Parse("2006-01-02", req.DOB)</div><div class="line-desc"><strong>Parse date string to time.Time.</strong> The request comes in with DOB as a string like <code>"1990-05-10"</code>. The database expects a <code>time.Time</code> value. <code>time.Parse</code> converts the string to a proper time object. If the format is wrong, it returns an error.</div></div>
+    <div class="line-row highlight"><div class="line-num">43</div><div class="line-code">return models.UserResponse{}, fmt.Errorf("invalid dob format: %w", err)</div><div class="line-desc"><strong>Return empty struct + wrapped error.</strong> When a function returns both a value and an error, on error you return an empty value + the error. <code>fmt.Errorf("...: %w", err)</code> wraps the original error with extra context. The <code>%w</code> verb is special — it allows <code>errors.Is()</code> to unwrap and match the original error.</div></div>
+    <div class="line-row"><div class="line-num">54</div><div class="line-code">DOB: user.Dob.Format("2006-01-02"),</div><div class="line-desc"><strong>Format time.Time back to string.</strong> The database gives us a <code>time.Time</code> object. The API response needs a string. <code>.Format("2006-01-02")</code> converts it back to "YYYY-MM-DD" format. Same magic date reference as Parse — <code>2006-01-02</code> is Go's date layout template.</div></div>
+    <div class="line-row highlight"><div class="line-num">62</div><div class="line-code">if errors.Is(err, pgx.ErrNoRows) {</div><div class="line-desc"><strong>Detect "not found" database error.</strong> When you query for a user ID that doesn't exist, pgx returns <code>pgx.ErrNoRows</code>. <code>errors.Is(err, pgx.ErrNoRows)</code> checks if this specific error is in the error chain. We translate this database-specific error into our own <code>ErrUserNotFound</code>, keeping the database details private from the handler layer.</div></div>
+    <div class="line-row"><div class="line-num">72</div><div class="line-code">Age: CalculateAge(user.Dob),</div><div class="line-desc"><strong>Dynamic age calculation.</strong> This is the KEY feature! We don't store age — we calculate it fresh every time a user is fetched. This means if you check Alice's age today vs tomorrow on her birthday, you'll get different results. The age is ALWAYS accurate.</div></div>
+    <div class="line-row highlight"><div class="line-num">100</div><div class="line-code">_, err := s.repo.GetUserByID(ctx, id)</div><div class="line-desc"><strong>Verify user exists before deleting.</strong> The <code>_</code> (blank identifier) discards the returned User value — we only care if the error is a "not found" error. If the user doesn't exist, we return ErrUserNotFound BEFORE trying to delete, giving a clean 404 response.</div></div>
+    <div class="line-row"><div class="line-num">116-121</div><div class="line-code">if page &gt; 0 &amp;&amp; limit &gt; 0 { offset := (page-1)*limit ... } else { ... ListUsers }</div><div class="line-desc"><strong>Pagination logic.</strong> If both <code>page</code> and <code>limit</code> are provided and positive, we calculate the OFFSET: <code>(page-1) * limit</code>. Page 1, limit 10 → offset 0 (start from beginning). Page 2, limit 10 → offset 10 (skip first 10). Page 3, limit 10 → offset 20. Simple math!</div></div>
+    <div class="line-row highlight"><div class="line-num">127</div><div class="line-code">res := make([]models.UserWithAgeResponse, len(users))</div><div class="line-desc"><strong>Pre-allocate result slice.</strong> <code>make([]T, n)</code> creates a slice of type T with n elements. Pre-allocating avoids repeated memory reallocations as we append. Then we fill each slot using index <code>i</code> in the loop, which is more efficient than <code>append()</code>.</div></div>
+  </div>
+
+  <h3>The CalculateAge Function — Most Important Logic</h3>
+  <div class="line-explain">
+    <div class="line-row highlight"><div class="line-num">140</div><div class="line-code">func CalculateAge(dob time.Time) int {</div><div class="line-desc"><strong>Function takes a time.Time, returns an int.</strong> This is a <strong>pure function</strong> — it has no side effects, doesn't touch the database, doesn't log anything. Given the same DOB, it always returns the correct age for today. Pure functions are the easiest to test.</div></div>
+    <div class="line-row"><div class="line-num">141</div><div class="line-code">now := time.Now()</div><div class="line-desc"><strong>Get the current time.</strong> <code>time.Now()</code> returns the current local date and time as a <code>time.Time</code>. We use this as the "as of" point for age calculation.</div></div>
+    <div class="line-row highlight"><div class="line-num">142</div><div class="line-code">years := now.Year() - dob.Year()</div><div class="line-desc"><strong>Initial year difference.</strong> <code>.Year()</code> extracts just the year (e.g., 2026). Subtracting gives a raw year difference. For someone born in 1990, this gives 36. BUT this might be wrong by 1 if their birthday hasn't happened yet this year!</div></div>
+    <div class="line-row"><div class="line-num">143</div><div class="line-code">if now.Month() &lt; dob.Month() || (now.Month() == dob.Month() &amp;&amp; now.Day() &lt; dob.Day()) {</div><div class="line-desc"><strong>The birthday-hasn't-happened-yet correction.</strong> Two cases where we subtract 1 year: (1) Current month is BEFORE birth month — their birthday is later this year. (2) Same month BUT current day is BEFORE birth day — their birthday is later this month. The <code>&amp;&amp;</code> means AND, <code>||</code> means OR.</div></div>
+    <div class="line-row highlight"><div class="line-num">144</div><div class="line-code">years--</div><div class="line-desc"><strong>Subtract one year.</strong> <code>years--</code> is shorthand for <code>years = years - 1</code>. If the birthday hasn't occurred yet this year, reduce the calculated age by one year. Example: Born May 15, 1990. Today is January 12, 2026. Raw: 2026-1990=36. But Jan &lt; May, so subtract 1 → age = 35. Correct!</div></div>
+    <div class="line-row"><div class="line-num">146</div><div class="line-code">return years</div><div class="line-desc"><strong>Return the calculated age.</strong> After the correction, <code>years</code> holds the correct age. Return it as an integer.</div></div>
+  </div>
+</div>
+
+<!-- ===== CHAPTER 15: UNIT TESTS ===== -->
+<div class="chapter">
+  <div class="chapter-header">
+    <div class="chapter-num">Chapter 15</div>
+    <div class="chapter-title">🧪 Unit Tests — Automated Testing of Age Calculation</div>
+    <div class="chapter-subtitle">How to write and run automated tests in Go for the CalculateAge function</div>
+    <div class="filepath">internal/service/user_service_test.go</div>
+  </div>
+
+  <div class="concept-box">
+    <div class="label">💡 What is a unit test?</div>
+    <p>A unit test is an automated check that says "given THIS input, I expect THAT output". You run <code>go test ./internal/service -v</code> and Go runs all test functions. If the function returns the wrong value, the test FAILS and tells you exactly what went wrong. This catches bugs automatically before you deploy to production.</p>
+  </div>
+
+  <div class="line-explain">
+    <div class="line-row highlight"><div class="line-num">1</div><div class="line-code">package service</div><div class="line-desc"><strong>Same package as what we're testing.</strong> Test files belong to the same package as the code they test. This gives them access to unexported (private) functions. Test files have <code>_test.go</code> suffix and are ONLY compiled when running tests, never in production builds.</div></div>
+    <div class="line-row"><div class="line-num">4-5</div><div class="line-code">import ("testing" "time")</div><div class="line-desc"><strong>Testing package import.</strong> <code>testing</code> is Go's built-in test framework. <code>time</code> for time operations. No external testing library needed — Go has everything built in!</div></div>
+    <div class="line-row highlight"><div class="line-num">8</div><div class="line-code">func TestCalculateAge(t *testing.T) {</div><div class="line-desc"><strong>Test function declaration.</strong> ALL test functions MUST: start with <code>Test</code> (capital T), take <code>t *testing.T</code> as the only parameter, and return nothing. Go's test runner automatically discovers and runs any function matching this pattern in <code>_test.go</code> files.</div></div>
+    <div class="line-row"><div class="line-num">9-13</div><div class="line-code">tests := []struct { name string; dob time.Time; expected int }{</div><div class="line-desc"><strong>Table-driven test setup.</strong> This is the most popular Go testing pattern: define a slice of anonymous structs where each struct represents one test case. <code>name</code> = description of the case. <code>dob</code> = input. <code>expected</code> = what CalculateAge should return. Then loop through all cases.</div></div>
+    <div class="line-row highlight"><div class="line-num">16</div><div class="line-code">dob: time.Now().AddDate(-25, 0, -10),</div><div class="line-desc"><strong>Relative date calculation for tests.</strong> Instead of hardcoding <code>"2001-06-02"</code> (which would give wrong results next year), we use <code>time.Now().AddDate(-25, 0, -10)</code> — "25 years ago, same month, 10 days earlier". This test ALWAYS means "someone whose birthday was 10 days ago". It works correctly regardless of what year you run the test.</div></div>
+    <div class="line-row"><div class="line-num">21</div><div class="line-code">dob: time.Now().AddDate(-25, 0, 10),</div><div class="line-desc"><strong>Future birthday test case.</strong> 25 years ago in terms of year, but birthday is 10 days from NOW. This person is 24 years old (birthday hasn't happened yet this year). Expected: 24, not 25. This tests the crucial if-condition in CalculateAge.</div></div>
+    <div class="line-row highlight"><div class="line-num">41-48</div><div class="line-code">for _, tt := range tests { t.Run(tt.name, func(t *testing.T) { actual := CalculateAge(tt.dob); if actual != tt.expected { t.Errorf(...) } }) }</div><div class="line-desc"><strong>Test loop with subtests.</strong> <code>for _, tt := range tests</code> iterates through each test case (the <code>_</code> discards the index). <code>t.Run(tt.name, ...)</code> creates a named <em>subtest</em> so each case shows separately in output. If <code>actual != tt.expected</code>, <code>t.Errorf</code> marks the test as FAILED and prints the message — but continues running other cases.</div></div>
+    <div class="line-row"><div class="line-num">45</div><div class="line-code">t.Errorf("CalculateAge(%v) = %d; expected %d", tt.dob.Format("2006-01-02"), actual, tt.expected)</div><div class="line-desc"><strong>Test failure message.</strong> <code>t.Errorf</code> is like <code>fmt.Printf</code> but marks the test as failed. The message shows the input, what we GOT, and what we EXPECTED. A great error message helps you understand the failure immediately. <code>%v</code> = default format, <code>%d</code> = integer format.</div></div>
+  </div>
+</div>
+
+<!-- ===== CHAPTER 16: HANDLERS ===== -->
+<div class="chapter">
+  <div class="chapter-header">
+    <div class="chapter-num">Chapter 16</div>
+    <div class="chapter-title">🎯 HTTP Handlers — Processing Web Requests</div>
+    <div class="chapter-subtitle">The functions that receive HTTP requests, validate them, and send JSON responses</div>
+    <div class="filepath">internal/handler/user_handler.go</div>
+  </div>
+
+  <div class="section-intro">
+    Handlers are the <strong>front door</strong> of your application. They receive the raw HTTP request, parse the JSON body, validate the input, call the service layer, and format the response. Every API endpoint has one handler function.
+  </div>
+
+  <div class="line-explain">
+    <div class="line-row highlight"><div class="line-num">14-17</div><div class="line-code">type UserHandler struct { service service.UserService; logger *zap.Logger }</div><div class="line-desc"><strong>Handler struct with dependencies.</strong> The UserHandler stores its two dependencies: <code>service</code> (for business logic) and <code>logger</code> (for logging). Storing them in a struct lets you inject different implementations (e.g., a mock service for testing).</div></div>
+    <div class="line-row"><div class="line-num">20-25</div><div class="line-code">func NewUserHandler(service service.UserService, logger *zap.Logger) *UserHandler { return &amp;UserHandler{...} }</div><div class="line-desc"><strong>Constructor with dependency injection.</strong> The handler receives its dependencies from outside (injected). This is better than creating them internally — the caller controls which service implementation is used.</div></div>
+    <div class="line-row highlight"><div class="line-num">28</div><div class="line-code">func (h *UserHandler) CreateUser(c *fiber.Ctx) error {</div><div class="line-desc"><strong>Fiber handler function signature.</strong> Every Fiber route handler must have this exact signature: takes <code>*fiber.Ctx</code> (Fiber's context — holds request and response), returns <code>error</code>. Fiber calls this function when a matching HTTP request arrives.</div></div>
+    <div class="line-row"><div class="line-num">29</div><div class="line-code">var req models.CreateUserRequest</div><div class="line-desc"><strong>Declare an empty request struct.</strong> <code>var req models.CreateUserRequest</code> creates a zero-value CreateUserRequest (all fields empty). We then fill it by parsing the request body. Using <code>var</code> instead of <code>:=</code> here because we need <code>req</code> to be addressable (to pass <code>&amp;req</code> to BodyParser).</div></div>
+    <div class="line-row highlight"><div class="line-num">30</div><div class="line-code">if err := c.BodyParser(&amp;req); err != nil {</div><div class="line-desc"><strong>Parse JSON request body.</strong> <code>c.BodyParser(&amp;req)</code> reads the HTTP request body, parses it as JSON, and fills the <code>req</code> struct with the values. The <code>&amp;</code> passes a pointer so BodyParser can modify the struct in place. If the body isn't valid JSON, this returns an error.</div></div>
+    <div class="line-row"><div class="line-num">32-34</div><div class="line-code">return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Cannot parse JSON body"})</div><div class="line-desc"><strong>Return a 400 Bad Request error response.</strong> <code>c.Status(400)</code> sets the HTTP status code. <code>.JSON()</code> serializes the argument to JSON and sets Content-Type to application/json. <code>fiber.Map</code> is just <code>map[string]interface{}</code> — a flexible key-value map for building JSON objects.</div></div>
+    <div class="line-row highlight"><div class="line-num">37</div><div class="line-code">if err := Validate.Struct(req); err != nil {</div><div class="line-desc"><strong>Validate the parsed request struct.</strong> <code>Validate.Struct(req)</code> checks all validation tags on the struct's fields. For <code>CreateUserRequest</code>, it checks: name is required (1-100 chars), DOB matches the date format, and DOB passes our custom <code>past_date</code> check. If ANY field fails, this returns a non-nil error.</div></div>
+    <div class="line-row"><div class="line-num">44</div><div class="line-code">user, err := h.service.CreateUser(c.Context(), req)</div><div class="line-desc"><strong>Delegate to the service layer.</strong> <code>c.Context()</code> extracts Go's standard <code>context.Context</code> from Fiber's context. We pass it along so the service can cancel long-running operations if the client disconnects. This is a critical Go pattern for preventing resource leaks.</div></div>
+    <div class="line-row highlight"><div class="line-num">53</div><div class="line-code">return c.Status(fiber.StatusCreated).JSON(user)</div><div class="line-desc"><strong>Return 201 Created with the new user.</strong> HTTP 201 specifically means "a new resource was created" (vs 200 which means "general success"). <code>.JSON(user)</code> serializes the <code>UserResponse</code> struct to JSON using the <code>json:"..."</code> tags we defined on the struct fields.</div></div>
+    <div class="line-row"><div class="line-num">58</div><div class="line-code">idStr := c.Params("id")</div><div class="line-desc"><strong>Read URL parameter.</strong> For the route <code>/users/:id</code>, Fiber captures whatever is after the last slash. If the URL is <code>/users/42</code>, then <code>c.Params("id")</code> returns the string <code>"42"</code>. URL parameters are always strings, so we need to convert to int.</div></div>
+    <div class="line-row highlight"><div class="line-num">59</div><div class="line-code">id, err := strconv.Atoi(idStr)</div><div class="line-desc"><strong>Convert string to integer.</strong> <code>strconv.Atoi</code> = "Ascii TO Integer". Converts <code>"42"</code> to <code>42</code>. Returns an error if the string isn't a valid integer (e.g., <code>/users/abc</code> would fail here). We check this error and return a 400 if it fails.</div></div>
+    <div class="line-row"><div class="line-num">69</div><div class="line-code">if errors.Is(err, service.ErrUserNotFound) {</div><div class="line-desc"><strong>Type-safe error matching.</strong> <code>errors.Is</code> checks if the error matches a specific sentinel value. This works even if the error was wrapped (with <code>fmt.Errorf("...: %w", err)</code>). If the service returns "user not found", we return 404. Any OTHER error returns 500 (internal server error).</div></div>
+    <div class="line-row highlight"><div class="line-num">159</div><div class="line-code">pageStr := c.Query("page")</div><div class="line-desc"><strong>Read query parameters.</strong> Query parameters are the <code>?key=value</code> part of a URL. For <code>/users?page=2&amp;limit=10</code>, <code>c.Query("page")</code> returns <code>"2"</code> and <code>c.Query("limit")</code> returns <code>"10"</code>. If the parameter isn't present, returns an empty string.</div></div>
+    <div class="line-row"><div class="line-num">154</div><div class="line-code">return c.SendStatus(fiber.StatusNoContent)</div><div class="line-desc"><strong>Return 204 with no body.</strong> HTTP 204 means "success, but there's no content to return". This is the correct status for DELETE operations. <code>SendStatus</code> (not <code>Status(...).JSON(...)</code>) sends ONLY the status code with an empty body — perfect for DELETE responses.</div></div>
+  </div>
+</div>
+
+<!-- ===== CHAPTER 17: MIDDLEWARE ===== -->
+<div class="chapter">
+  <div class="chapter-header">
+    <div class="chapter-num">Chapter 17</div>
+    <div class="chapter-title">🛡️ Middleware — Request Tracking &amp; Duration Logging</div>
+    <div class="chapter-subtitle">Functions that run before and/or after every handler — cross-cutting concerns</div>
+    <div class="filepath">internal/middleware/middleware.go</div>
+  </div>
+
+  <div class="analogy-box">
+    <div class="label">🚦 Analogy</div>
+    <p>Middleware is like a <strong>security checkpoint at an airport</strong>. Every passenger (HTTP request) must go through the checkpoint BEFORE reaching their gate (the handler). The checkpoint can add a stamp (request ID), measure how long you've been there, or even turn you away. After you're done and returning, you pass through again (logging how long the journey took).</p>
+  </div>
+
+  <div class="line-explain">
+    <div class="line-row highlight"><div class="line-num">12</div><div class="line-code">func RequestID() fiber.Handler {</div><div class="line-desc"><strong>Middleware factory function.</strong> This function RETURNS a handler (not IS a handler). The pattern <code>func() fiber.Handler { return func(c *fiber.Ctx) error { ... } }</code> lets you configure the middleware before registering it. It's a closure — the inner function has access to the outer function's variables.</div></div>
+    <div class="line-row"><div class="line-num">14</div><div class="line-code">rid := c.Get("X-Request-ID")</div><div class="line-desc"><strong>Read existing request ID from header.</strong> If the caller (e.g., a load balancer) already set an <code>X-Request-ID</code> header, we respect it. This lets you trace a request across multiple microservices. <code>c.Get("header-name")</code> reads an HTTP request header.</div></div>
+    <div class="line-row highlight"><div class="line-num">15-17</div><div class="line-code">if rid == "" { rid = uuid.New().String() }</div><div class="line-desc"><strong>Generate a new UUID if none exists.</strong> <code>uuid.New()</code> generates a cryptographically random UUID like <code>6fe5ccc0-ac35-4cb3-af8d-78be9e777441</code>. <code>.String()</code> converts it to the standard UUID string format. Every request gets a unique ID for tracing.</div></div>
+    <div class="line-row"><div class="line-num">18</div><div class="line-code">c.Set("X-Request-ID", rid)</div><div class="line-desc"><strong>Set the response header.</strong> <code>c.Set</code> sets an HTTP RESPONSE header. The client will see <code>X-Request-ID: 6fe5ccc0-...</code> in the response. Clients can log this ID and use it when reporting bugs: "Request with ID abc123 failed".</div></div>
+    <div class="line-row highlight"><div class="line-num">19</div><div class="line-code">c.Locals("requestId", rid)</div><div class="line-desc"><strong>Store request ID in request-scoped storage.</strong> <code>c.Locals</code> is like a temporary key-value store that lives for the duration of ONE request. We store the request ID here so the logging middleware (which runs later) can retrieve it without re-reading the header.</div></div>
+    <div class="line-row"><div class="line-num">20</div><div class="line-code">return c.Next()</div><div class="line-desc"><strong>Pass control to the next middleware/handler.</strong> <code>c.Next()</code> calls the next function in the chain. If we didn't call this, the request would STOP here and never reach the handler. This is the fundamental middleware concept: each middleware must call <code>Next()</code> to continue the chain.</div></div>
+    <div class="line-row highlight"><div class="line-num">27</div><div class="line-code">start := time.Now()</div><div class="line-desc"><strong>Record the start time.</strong> We capture the time BEFORE calling <code>c.Next()</code>. After the handler runs and control returns here, we'll subtract start from the current time to get the request duration.</div></div>
+    <div class="line-row"><div class="line-num">30</div><div class="line-code">err := c.Next()</div><div class="line-desc"><strong>Execute the entire handler chain.</strong> This calls the next middleware AND the actual handler. All execution between <code>c.Next()</code> and the following lines happens INSIDE the handler. After <code>c.Next()</code> returns, the handler has finished and we can measure how long it took.</div></div>
+    <div class="line-row highlight"><div class="line-num">32</div><div class="line-code">duration := time.Since(start)</div><div class="line-desc"><strong>Calculate elapsed time.</strong> <code>time.Since(start)</code> is shorthand for <code>time.Now().Sub(start)</code>. It returns a <code>time.Duration</code> value (like <code>2.125958ms</code>). This measures how long the ENTIRE request took to process — database query included.</div></div>
+    <div class="line-row"><div class="line-num">35-40</div><div class="line-code">fields := []zap.Field{ zap.String("method",...), zap.String("path",...), ... }</div><div class="line-desc"><strong>Build structured log fields.</strong> <code>zap.Field</code> is a typed key-value pair for structured logging. <code>zap.String("key", value)</code>, <code>zap.Int("key", value)</code>, <code>zap.Duration("key", value)</code> create different field types. Using typed fields (vs string formatting) makes logs machine-parseable for log aggregation tools.</div></div>
+    <div class="line-row highlight"><div class="line-num">46-51</div><div class="line-code">if err != nil { logger.Error("Request failed") } else { logger.Info("Request completed") }</div><div class="line-desc"><strong>Log at appropriate level based on outcome.</strong> If the handler returned an error, log at ERROR level (shown in red). If successful, log at INFO level (shown in white/green). The <code>fields...</code> spread operator expands the slice as individual arguments to the logger function.</div></div>
+  </div>
+</div>
+
+<!-- ===== CHAPTER 18: ROUTES ===== -->
+<div class="chapter">
+  <div class="chapter-header">
+    <div class="chapter-num">Chapter 18</div>
+    <div class="chapter-title">🗺️ Routes — URL Mapping</div>
+    <div class="chapter-subtitle">Connecting URL paths and HTTP methods to their handler functions</div>
+    <div class="filepath">internal/routes/routes.go</div>
+  </div>
+
+  <div class="line-explain">
+    <div class="line-row highlight"><div class="line-num">10</div><div class="line-code">func SetupRoutes(app *fiber.App, userHandler *handler.UserHandler) {</div><div class="line-desc"><strong>Route registration function.</strong> Takes the Fiber app and our handler as parameters. By accepting the app as a parameter (dependency injection again!), this function is testable and reusable. In main.go we call this once to wire everything up.</div></div>
+    <div class="line-row"><div class="line-num">11</div><div class="line-code">app.Post("/users", userHandler.CreateUser)</div><div class="line-desc"><strong>POST /users → CreateUser handler.</strong> When an HTTP POST request arrives for <code>/users</code>, Fiber calls <code>userHandler.CreateUser</code>. Note: we pass the function ITSELF (not calling it). <code>userHandler.CreateUser</code> is a method value — a function reference bound to that specific handler instance.</div></div>
+    <div class="line-row highlight"><div class="line-num">12</div><div class="line-code">app.Get("/users/:id", userHandler.GetUserByID)</div><div class="line-desc"><strong>GET /users/:id → GetUserByID handler.</strong> The <code>:id</code> is a dynamic URL segment. Fiber captures whatever is in this position and makes it available via <code>c.Params("id")</code>. So <code>/users/42</code> → id="42", <code>/users/99</code> → id="99".</div></div>
+    <div class="line-row"><div class="line-num">13</div><div class="line-code">app.Put("/users/:id", userHandler.UpdateUser)</div><div class="line-desc"><strong>PUT /users/:id → UpdateUser handler.</strong> PUT is for replacing an entire resource. Our API uses it to update a user's name and DOB together.</div></div>
+    <div class="line-row highlight"><div class="line-num">14</div><div class="line-code">app.Delete("/users/:id", userHandler.DeleteUser)</div><div class="line-desc"><strong>DELETE /users/:id → DeleteUser handler.</strong> The DELETE method conventionally removes the specified resource. After successful deletion, our handler returns 204 No Content.</div></div>
+    <div class="line-row"><div class="line-num">15</div><div class="line-code">app.Get("/users", userHandler.ListUsers)</div><div class="line-desc"><strong>GET /users → ListUsers handler.</strong> No <code>:id</code> here — this route returns ALL users (or paginated results via query params). Note: this must be registered AFTER <code>/users/:id</code> to avoid route conflicts in some frameworks (though Fiber handles this correctly either way).</div></div>
+  </div>
+</div>
+
+<!-- ===== CHAPTER 19: MAIN.GO ===== -->
+<div class="chapter">
+  <div class="chapter-header">
+    <div class="chapter-num">Chapter 19</div>
+    <div class="chapter-title">🚀 Main Entry Point — Where Everything Starts</div>
+    <div class="chapter-subtitle">The orchestrator that wires all components together and starts the server</div>
+    <div class="filepath">cmd/server/main.go</div>
+  </div>
+
+  <div class="concept-box">
+    <div class="label">💡 Why is it in cmd/server/ and not just main.go?</div>
+    <p>The <code>cmd/</code> folder convention in Go is for executable commands. A project might have multiple executables: <code>cmd/server/</code> (the main API), <code>cmd/migrate/</code> (a migration tool), <code>cmd/seed/</code> (test data seeder). Organizing this way keeps concerns separate and follows Go project conventions.</p>
+  </div>
+
+  <div class="line-explain">
+    <div class="line-row highlight"><div class="line-num">1</div><div class="line-code">package main</div><div class="line-desc"><strong>The main package.</strong> In Go, ONLY files in <code>package main</code> that have a <code>func main()</code> become executable programs. All other packages are libraries. When you run <code>go run cmd/server/main.go</code>, Go looks for this package and calls the <code>main()</code> function.</div></div>
+    <div class="line-row"><div class="line-num">3-23</div><div class="line-code">import (...)</div><div class="line-desc"><strong>All imports the main file needs.</strong> Standard library: <code>context</code>, <code>os</code>, <code>os/signal</code>, <code>syscall</code>, <code>time</code>. Our own packages: <code>config</code>, <code>db</code>, <code>handler</code>, <code>logger</code>, <code>middleware</code>, <code>repository</code>, <code>routes</code>, <code>service</code>. External libraries: <code>fiber</code>, <code>recover</code>, <code>pgxpool</code>, <code>zap</code>.</div></div>
+    <div class="line-row highlight"><div class="line-num">25</div><div class="line-code">func main() {</div><div class="line-desc"><strong>The entry point function.</strong> When you run the program, Go calls <code>main()</code> and everything starts here. The function runs top to bottom, setting up each layer in the right order. When <code>main()</code> returns, the program exits.</div></div>
+    <div class="line-row"><div class="line-num">27</div><div class="line-code">logger.Init()</div><div class="line-desc"><strong>Initialize logger FIRST.</strong> Logger must be initialized before anything else so we can log startup messages. All subsequent log calls use <code>logger.Log.Info()</code>, <code>logger.Log.Fatal()</code>, etc.</div></div>
+    <div class="line-row highlight"><div class="line-num">28-30</div><div class="line-code">defer func() { _ = logger.Log.Sync() }()</div><div class="line-desc"><strong>Ensure logs are flushed before exit.</strong> Zap buffers log writes for performance. <code>Sync()</code> flushes the buffer — makes sure all pending log messages are actually written before the program exits. <code>defer</code> schedules this to run when main() returns. The <code>_ =</code> discards the error (Sync on a TTY always returns an error on some systems, and it's not critical).</div></div>
+    <div class="line-row"><div class="line-num">35</div><div class="line-code">cfg := config.Load()</div><div class="line-desc"><strong>Load configuration.</strong> Reads PORT and DATABASE_URL from environment variables (with defaults). Returns a <code>*Config</code> that we'll use throughout the startup process.</div></div>
+    <div class="line-row highlight"><div class="line-num">38</div><div class="line-code">ctx := context.Background()</div><div class="line-desc"><strong>Create a root context.</strong> <code>context.Background()</code> creates the top-level context — it's never cancelled, never times out. We use this for startup operations. In handlers, we use request-scoped contexts (that cancel when the client disconnects).</div></div>
+    <div class="line-row"><div class="line-num">39</div><div class="line-code">pool, err := pgxpool.New(ctx, cfg.DatabaseURL)</div><div class="line-desc"><strong>Create a PostgreSQL connection pool.</strong> A connection pool maintains multiple open database connections. Instead of opening a new connection for every HTTP request (slow!), the pool reuses existing ones. <code>pgxpool.New</code> creates the pool but doesn't connect yet — it connects lazily when first used (or on Ping).</div></div>
+    <div class="line-row highlight"><div class="line-num">40-42</div><div class="line-code">if err != nil { logger.Log.Fatal(...) }</div><div class="line-desc"><strong>Fatal error handling.</strong> <code>logger.Log.Fatal</code> logs the error message and then calls <code>os.Exit(1)</code> (exits with error code 1). We use Fatal for unrecoverable startup failures — if we can't connect to the database, the server can't work, so there's no point continuing.</div></div>
+    <div class="line-row"><div class="line-num">43</div><div class="line-code">defer pool.Close()</div><div class="line-desc"><strong>Close the connection pool on exit.</strong> Scheduling pool closure with defer ensures all database connections are properly closed when main() exits (even if it exits early due to a signal). Clean shutdown prevents connection leaks.</div></div>
+    <div class="line-row highlight"><div class="line-num">46</div><div class="line-code">if err := pool.Ping(ctx); err != nil {</div><div class="line-desc"><strong>Verify the database connection works.</strong> <code>Ping</code> sends a lightweight test query to the database. If PostgreSQL is down, the wrong URL is configured, or the database doesn't exist, Ping returns an error. Better to fail fast here than to fail mysteriously later when a user makes a request.</div></div>
+    <div class="line-row"><div class="line-num">52</div><div class="line-code">if err := db.RunMigrations(ctx, pool, logger.Log); err != nil {</div><div class="line-desc"><strong>Run pending database migrations.</strong> Before the server starts accepting requests, apply any pending schema changes. This ensures the database has the <code>users</code> table (and all other tables) before handlers try to use them.</div></div>
+    <div class="line-row highlight"><div class="line-num">57</div><div class="line-code">handler.InitValidator()</div><div class="line-desc"><strong>Initialize the input validator.</strong> Creates the Validate instance and registers our custom <code>past_date</code> validation rule. Must be done before any handlers run, since handlers use <code>Validate.Struct()</code>.</div></div>
+    <div class="line-row"><div class="line-num">60-62</div><div class="line-code">userRepo := ... userService := ... userHandler := ...</div><div class="line-desc"><strong>Wire up the dependency chain.</strong> This is manual dependency injection: pool → repository → service → handler. Each layer receives its dependency from the caller. This is the Go way — no magic frameworks, just clear function calls.</div></div>
+    <div class="line-row highlight"><div class="line-num">65-69</div><div class="line-code">app := fiber.New(fiber.Config{ DisableStartupMessage: false, ReadTimeout: 10*time.Second, WriteTimeout: 10*time.Second })</div><div class="line-desc"><strong>Create Fiber app with timeouts.</strong> <code>ReadTimeout</code> = maximum time to read the request body. <code>WriteTimeout</code> = maximum time to send the response. These prevent slow clients from holding connections open forever. Without timeouts, a slow attack could exhaust all server connections.</div></div>
+    <div class="line-row"><div class="line-num">72</div><div class="line-code">app.Use(recover.New())</div><div class="line-desc"><strong>Panic recovery middleware.</strong> If ANY handler panics (unexpected runtime error), this middleware catches it, logs it, and returns a 500 Internal Server Error — instead of crashing the entire server process. Essential for production!</div></div>
+    <div class="line-row highlight"><div class="line-num">73-74</div><div class="line-code">app.Use(middleware.RequestID()); app.Use(middleware.RequestLogger(logger.Log))</div><div class="line-desc"><strong>Register custom middleware.</strong> Middleware runs in the ORDER it's registered. So: recover → RequestID → RequestLogger → handler. The RequestLogger can access the RequestID (set by the previous middleware) via <code>c.Locals("requestId")</code>.</div></div>
+    <div class="line-row"><div class="line-num">77</div><div class="line-code">routes.SetupRoutes(app, userHandler)</div><div class="line-desc"><strong>Register all API routes.</strong> This connects URL patterns to handler functions. After this call, Fiber knows "POST /users → userHandler.CreateUser", "GET /users/:id → userHandler.GetUserByID", etc.</div></div>
+    <div class="line-row highlight"><div class="line-num">80-81</div><div class="line-code">sigChan := make(chan os.Signal, 1); signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)</div><div class="line-desc"><strong>Set up graceful shutdown signal handling.</strong> <code>make(chan os.Signal, 1)</code> creates a channel (a Go concurrency primitive — think of it as a typed pipe). <code>signal.Notify</code> tells Go to send OS signals to this channel. <code>SIGINT</code> = Ctrl+C. <code>SIGTERM</code> = standard termination signal (from kill command or Docker stop).</div></div>
+    <div class="line-row"><div class="line-num">83-89</div><div class="line-code">go func() { &lt;-sigChan; logger.Log.Info("Shutting down..."); app.Shutdown() }()</div><div class="line-desc"><strong>Goroutine for graceful shutdown.</strong> <code>go func() { ... }()</code> starts a new goroutine (lightweight concurrent thread). <code>&lt;-sigChan</code> BLOCKS until a signal is received. When Ctrl+C is pressed, the signal arrives, and we call <code>app.Shutdown()</code> which stops accepting new requests and waits for in-flight requests to complete.</div></div>
+    <div class="line-row highlight"><div class="line-num">93</div><div class="line-code">if err := app.Listen(":" + cfg.Port); err != nil {</div><div class="line-desc"><strong>Start listening for HTTP connections.</strong> <code>app.Listen(":3000")</code> starts the HTTP server and BLOCKS — main() doesn't return until the server stops. The <code>:</code> prefix means "listen on all network interfaces" (not just localhost). The server exits when <code>app.Shutdown()</code> is called from the goroutine above.</div></div>
+  </div>
+</div>
+
+<!-- ===== CHAPTER 20: DOCKERFILE ===== -->
+<div class="chapter">
+  <div class="chapter-header">
+    <div class="chapter-num">Chapter 20</div>
+    <div class="chapter-title">🐋 Dockerfile — Containerizing the Application</div>
+    <div class="chapter-subtitle">Instructions to package the Go app into a portable Docker container</div>
+    <div class="filepath">Dockerfile</div>
+  </div>
+
+  <div class="analogy-box">
+    <div class="label">📦 Analogy</div>
+    <p>A Docker container is like a <strong>shipping container</strong>. The Dockerfile is the packing list — it describes exactly what goes into the container (OS, runtime, your code). Once packed, the container can run identically on your Mac, a Linux server, or in the cloud. No more "it works on my machine" problems!</p>
+  </div>
+
+  <div class="concept-box">
+    <div class="label">💡 Multi-Stage Build</div>
+    <p>We use a <strong>two-stage build</strong>: Stage 1 (builder) uses the large golang image to compile the code. Stage 2 (final) uses the tiny alpine image and copies ONLY the compiled binary. The final image is tiny (~15MB instead of ~800MB) because it doesn't include Go compilers, source code, or build tools!</p>
+  </div>
+
+  <div class="line-explain">
+    <div class="line-row highlight"><div class="line-num">2</div><div class="line-code">FROM golang:1.26-alpine AS builder</div><div class="line-desc"><strong>First stage: build environment.</strong> <code>FROM</code> specifies the base image. <code>golang:1.26-alpine</code> is an official Go image based on Alpine Linux (tiny, ~20MB). <code>AS builder</code> names this stage "builder" so we can reference it later. This stage has Go installed and can compile code.</div></div>
+    <div class="line-row"><div class="line-num">4</div><div class="line-code">WORKDIR /app</div><div class="line-desc"><strong>Set the working directory inside the container.</strong> All subsequent commands run inside <code>/app</code>. If it doesn't exist, Docker creates it. Like <code>cd /app</code> in the terminal.</div></div>
+    <div class="line-row highlight"><div class="line-num">7</div><div class="line-code">COPY go.mod go.sum ./</div><div class="line-desc"><strong>Copy dependency files first (Docker cache optimization).</strong> We copy ONLY go.mod and go.sum before the source code. Docker caches each layer. If only source code changes (not dependencies), Docker reuses the cached downloaded dependencies layer — making rebuilds much faster!</div></div>
+    <div class="line-row"><div class="line-num">8</div><div class="line-code">RUN go mod download</div><div class="line-desc"><strong>Download all dependencies.</strong> <code>RUN</code> executes a command during the BUILD phase. <code>go mod download</code> downloads all packages listed in go.mod. This layer is cached — only re-runs if go.mod or go.sum changes.</div></div>
+    <div class="line-row highlight"><div class="line-num">11</div><div class="line-code">COPY . .</div><div class="line-desc"><strong>Copy all source code into the container.</strong> Copies everything from the current directory (host) to the working directory (<code>/app</code>) inside the container. This runs AFTER downloading dependencies, so code changes don't invalidate the dependency cache.</div></div>
+    <div class="line-row"><div class="line-num">14</div><div class="line-code">RUN CGO_ENABLED=0 GOOS=linux go build -o main ./cmd/server</div><div class="line-desc"><strong>Compile the Go binary.</strong> <code>CGO_ENABLED=0</code> = disable C bindings (creates a fully static binary with no external library dependencies). <code>GOOS=linux</code> = compile for Linux (even if building on Mac). <code>-o main</code> = name the output binary "main". <code>./cmd/server</code> = compile this package. Result: a single executable file called <code>main</code>.</div></div>
+    <div class="line-row highlight"><div class="line-num">17</div><div class="line-code">FROM alpine:3.19</div><div class="line-desc"><strong>Second stage: minimal production image.</strong> Starts fresh from the tiny Alpine Linux image (~5MB). No Go compiler, no source code, no build tools. Just the OS and whatever we explicitly copy into it.</div></div>
+    <div class="line-row"><div class="line-num">22</div><div class="line-code">COPY --from=builder /app/main .</div><div class="line-desc"><strong>Copy compiled binary from builder stage.</strong> <code>--from=builder</code> references the first stage by name. We copy ONLY the compiled binary (<code>/app/main</code>) into the current directory (<code>.</code> = /app). That's it — the entire application in one file!</div></div>
+    <div class="line-row highlight"><div class="line-num">25</div><div class="line-code">EXPOSE 3000</div><div class="line-desc"><strong>Document which port the app uses.</strong> <code>EXPOSE</code> is documentation — it doesn't actually open the port. It tells Docker and developers "this container listens on port 3000". The actual port mapping happens in docker-compose.yml or with <code>docker run -p 3000:3000</code>.</div></div>
+    <div class="line-row"><div class="line-num">28</div><div class="line-code">CMD ["./main"]</div><div class="line-desc"><strong>Default command to run when container starts.</strong> <code>CMD</code> specifies the command that runs when the container starts. The array format (JSON format) is preferred over shell format — it runs the binary directly without a shell wrapper, which makes signal handling (Ctrl+C) work correctly.</div></div>
+  </div>
+</div>
+
+<!-- ===== CHAPTER 21: DOCKER COMPOSE ===== -->
+<div class="chapter">
+  <div class="chapter-header">
+    <div class="chapter-num">Chapter 21</div>
+    <div class="chapter-title">🎼 Docker Compose — Multi-Container Orchestration</div>
+    <div class="chapter-subtitle">Running PostgreSQL and the API together with one command</div>
+    <div class="filepath">docker-compose.yml</div>
+  </div>
+
+  <div class="analogy-box">
+    <div class="label">🎭 Analogy</div>
+    <p>Docker Compose is like a <strong>stage director</strong> for your application. The director says: "Database, you go first. Web app, wait until the database is ready, then start." It manages multiple Docker containers as a team, handling their startup order, networking, and configuration.</p>
+  </div>
+
+  <div class="line-explain">
+    <div class="line-row highlight"><div class="line-num">1</div><div class="line-code">version: '3.8'</div><div class="line-desc"><strong>Docker Compose file format version.</strong> Specifies which Docker Compose feature set to use. Version 3.8 supports <code>healthcheck</code>, <code>depends_on: condition</code>, and other modern features we rely on.</div></div>
+    <div class="line-row"><div class="line-num">3</div><div class="line-code">services:</div><div class="line-desc"><strong>Services block.</strong> A "service" in Docker Compose is one container configuration. We have two services: <code>db</code> (PostgreSQL) and <code>web</code> (our Go API). Docker Compose starts both and connects them on a shared network automatically.</div></div>
+    <div class="line-row highlight"><div class="line-num">5</div><div class="line-code">image: postgres:17-alpine</div><div class="line-desc"><strong>Use the official PostgreSQL 17 image.</strong> <code>postgres:17-alpine</code> is the official PostgreSQL image based on Alpine Linux (small). This is pulled from Docker Hub (Docker's public image registry). No need to install PostgreSQL manually — Docker handles it!</div></div>
+    <div class="line-row"><div class="line-num">6</div><div class="line-code">container_name: user_management_db</div><div class="line-desc"><strong>Give the container a friendly name.</strong> Instead of a random Docker-generated name, we can refer to this container by <code>user_management_db</code>. Also used as the hostname on the Docker internal network — so our API connects using hostname "db" (the service name).</div></div>
+    <div class="line-row highlight"><div class="line-num">8-10</div><div class="line-code">environment: POSTGRES_USER: user_manager POSTGRES_PASSWORD: super_secret_password POSTGRES_DB: user_management</div><div class="line-desc"><strong>Configure PostgreSQL via environment variables.</strong> The official PostgreSQL image reads these special variables on first startup to: create a user named <code>user_manager</code>, set their password, and create a database named <code>user_management</code>. No SQL setup scripts needed!</div></div>
+    <div class="line-row"><div class="line-num">12</div><div class="line-code">- "5433:5432"</div><div class="line-desc"><strong>Port mapping: host:container.</strong> Maps host port 5433 to container port 5432 (PostgreSQL default). We use 5433 on the host to avoid colliding with a locally-running PostgreSQL on port 5432. Format is always <code>host_port:container_port</code>.</div></div>
+    <div class="line-row highlight"><div class="line-num">13-14</div><div class="line-code">volumes: - postgres_data:/var/lib/postgresql/data</div><div class="line-desc"><strong>Persist database data.</strong> PostgreSQL stores its data in <code>/var/lib/postgresql/data</code> inside the container. Without a volume, all data would be LOST when the container stops. <code>postgres_data:</code> is a named Docker volume — it survives container restarts and recreations.</div></div>
+    <div class="line-row"><div class="line-num">15-19</div><div class="line-code">healthcheck: test: ["CMD-SHELL", "pg_isready ..."] interval: 5s timeout: 5s retries: 5</div><div class="line-desc"><strong>Health check configuration.</strong> Docker periodically runs the test command to check if the service is healthy. <code>pg_isready</code> checks if PostgreSQL is accepting connections. <code>interval: 5s</code> = check every 5 seconds. <code>timeout: 5s</code> = fail if no response in 5s. <code>retries: 5</code> = mark unhealthy after 5 consecutive failures.</div></div>
+    <div class="line-row highlight"><div class="line-num">22</div><div class="line-code">build: .</div><div class="line-desc"><strong>Build the web service from the Dockerfile.</strong> Instead of using a pre-built image, <code>build: .</code> tells Docker Compose to build an image using the Dockerfile in the current directory (<code>.</code>). Every time you run <code>docker-compose up --build</code>, it rebuilds this image.</div></div>
+    <div class="line-row"><div class="line-num">28</div><div class="line-code">DATABASE_URL: "postgres://user_manager:super_secret_password@db:5432/user_management?sslmode=disable"</div><div class="line-desc"><strong>Database connection URL.</strong> The format is: <code>postgres://username:password@hostname:port/database?options</code>. Note the hostname is <code>db</code> — which is the SERVICE NAME of the database container. Docker Compose automatically creates a DNS entry so <code>db</code> resolves to the database container's IP address.</div></div>
+    <div class="line-row highlight"><div class="line-num">29-31</div><div class="line-code">depends_on: db: condition: service_healthy</div><div class="line-desc"><strong>Wait for database to be healthy before starting API.</strong> <code>depends_on: db: condition: service_healthy</code> tells Docker Compose: "Don't start the web container until the db container passes its health check". Without this, the API might try to connect to PostgreSQL before it's ready — causing startup failures.</div></div>
+    <div class="line-row"><div class="line-num">33-34</div><div class="line-code">volumes: postgres_data:</div><div class="line-desc"><strong>Declare the named volume.</strong> Named volumes must be declared here at the bottom. Docker manages the actual storage location. <code>postgres_data:</code> with no value uses Docker's default volume driver (local storage on the host machine).</div></div>
+  </div>
+</div>
+
+<!-- ===== FINAL CHAPTER: HOW IT ALL FITS ===== -->
+<div class="chapter">
+  <div class="chapter-header">
+    <div class="chapter-num">Final Chapter</div>
+    <div class="chapter-title">🎓 How It All Fits Together</div>
+    <div class="chapter-subtitle">A complete walkthrough of what happens when you call POST /users</div>
+  </div>
+
+  <h3>Complete Request Lifecycle — POST /users {"name": "Alice", "dob": "1990-05-10"}</h3>
+
+  <div style="background:#0d1117;border:1px solid rgba(99,102,241,0.2);border-radius:16px;padding:32px;margin:24px 0">
+    <div style="margin-bottom:20px"><span style="background:rgba(99,102,241,0.3);color:#a5b4fc;padding:4px 12px;border-radius:6px;font-size:12px;font-weight:700">STEP 1</span> <span style="color:#e2e8f0;margin-left:12px;font-size:14px">HTTP request arrives at port 3000</span></div>
+    <div style="margin-bottom:20px"><span style="background:rgba(99,102,241,0.3);color:#a5b4fc;padding:4px 12px;border-radius:6px;font-size:12px;font-weight:700">STEP 2</span> <span style="color:#e2e8f0;margin-left:12px;font-size:14px"><strong>Recover middleware</strong> wraps everything with panic protection</span></div>
+    <div style="margin-bottom:20px"><span style="background:rgba(99,102,241,0.3);color:#a5b4fc;padding:4px 12px;border-radius:6px;font-size:12px;font-weight:700">STEP 3</span> <span style="color:#e2e8f0;margin-left:12px;font-size:14px"><strong>RequestID middleware</strong> generates UUID, sets X-Request-ID header, stores in locals</span></div>
+    <div style="margin-bottom:20px"><span style="background:rgba(99,102,241,0.3);color:#a5b4fc;padding:4px 12px;border-radius:6px;font-size:12px;font-weight:700">STEP 4</span> <span style="color:#e2e8f0;margin-left:12px;font-size:14px"><strong>RequestLogger middleware</strong> records start time, calls Next()</span></div>
+    <div style="margin-bottom:20px"><span style="background:rgba(99,102,241,0.3);color:#a5b4fc;padding:4px 12px;border-radius:6px;font-size:12px;font-weight:700">STEP 5</span> <span style="color:#e2e8f0;margin-left:12px;font-size:14px"><strong>Router</strong> matches POST /users → calls CreateUser handler</span></div>
+    <div style="margin-bottom:20px"><span style="background:rgba(99,102,241,0.3);color:#a5b4fc;padding:4px 12px;border-radius:6px;font-size:12px;font-weight:700">STEP 6</span> <span style="color:#e2e8f0;margin-left:12px;font-size:14px"><strong>Handler</strong>: BodyParser reads JSON → {"name":"Alice","dob":"1990-05-10"} → CreateUserRequest struct</span></div>
+    <div style="margin-bottom:20px"><span style="background:rgba(99,102,241,0.3);color:#a5b4fc;padding:4px 12px;border-radius:6px;font-size:12px;font-weight:700">STEP 7</span> <span style="color:#e2e8f0;margin-left:12px;font-size:14px"><strong>Handler</strong>: Validate.Struct() checks: name required ✓, min=1 ✓, max=100 ✓, dob format ✓, past_date ✓</span></div>
+    <div style="margin-bottom:20px"><span style="background:rgba(99,102,241,0.3);color:#a5b4fc;padding:4px 12px;border-radius:6px;font-size:12px;font-weight:700">STEP 8</span> <span style="color:#e2e8f0;margin-left:12px;font-size:14px"><strong>Handler</strong>: calls service.CreateUser(ctx, req)</span></div>
+    <div style="margin-bottom:20px"><span style="background:rgba(99,102,241,0.3);color:#a5b4fc;padding:4px 12px;border-radius:6px;font-size:12px;font-weight:700">STEP 9</span> <span style="color:#e2e8f0;margin-left:12px;font-size:14px"><strong>Service</strong>: time.Parse("2006-01-02", "1990-05-10") → time.Time object</span></div>
+    <div style="margin-bottom:20px"><span style="background:rgba(99,102,241,0.3);color:#a5b4fc;padding:4px 12px;border-radius:6px;font-size:12px;font-weight:700">STEP 10</span> <span style="color:#e2e8f0;margin-left:12px;font-size:14px"><strong>Service</strong>: calls repo.CreateUser(ctx, "Alice", time.Time{1990-05-10})</span></div>
+    <div style="margin-bottom:20px"><span style="background:rgba(99,102,241,0.3);color:#a5b4fc;padding:4px 12px;border-radius:6px;font-size:12px;font-weight:700">STEP 11</span> <span style="color:#e2e8f0;margin-left:12px;font-size:14px"><strong>Repository</strong>: calls SQLC queries.CreateUser() with CreateUserParams{Name:"Alice", Dob:...}</span></div>
+    <div style="margin-bottom:20px"><span style="background:rgba(99,102,241,0.3);color:#a5b4fc;padding:4px 12px;border-radius:6px;font-size:12px;font-weight:700">STEP 12</span> <span style="color:#e2e8f0;margin-left:12px;font-size:14px"><strong>SQLC/pgx</strong>: Executes: INSERT INTO users (name, dob) VALUES ('Alice', '1990-05-10') RETURNING id, name, dob</span></div>
+    <div style="margin-bottom:20px"><span style="background:rgba(99,102,241,0.3);color:#a5b4fc;padding:4px 12px;border-radius:6px;font-size:12px;font-weight:700">STEP 13</span> <span style="color:#e2e8f0;margin-left:12px;font-size:14px"><strong>PostgreSQL</strong>: Inserts row, auto-generates id=1, returns {id:1, name:"Alice", dob:1990-05-10}</span></div>
+    <div style="margin-bottom:20px"><span style="background:rgba(99,102,241,0.3);color:#a5b4fc;padding:4px 12px;border-radius:6px;font-size:12px;font-weight:700">STEP 14</span> <span style="color:#e2e8f0;margin-left:12px;font-size:14px"><strong>Service</strong>: converts db.User to models.UserResponse, formats Dob as "1990-05-10" string</span></div>
+    <div style="margin-bottom:20px"><span style="background:rgba(99,102,241,0.3);color:#a5b4fc;padding:4px 12px;border-radius:6px;font-size:12px;font-weight:700">STEP 15</span> <span style="color:#e2e8f0;margin-left:12px;font-size:14px"><strong>Handler</strong>: logs "Created user successfully id=1", returns c.Status(201).JSON(user)</span></div>
+    <div style="margin-bottom:20px"><span style="background:rgba(99,102,241,0.3);color:#a5b4fc;padding:4px 12px;border-radius:6px;font-size:12px;font-weight:700">STEP 16</span> <span style="color:#e2e8f0;margin-left:12px;font-size:14px"><strong>RequestLogger middleware</strong> (after Next() returns): calculates duration, logs method/path/status/duration/requestId</span></div>
+    <div><span style="background:rgba(16,185,129,0.3);color:#10b981;padding:4px 12px;border-radius:6px;font-size:12px;font-weight:700">RESPONSE</span> <span style="color:#e2e8f0;margin-left:12px;font-size:14px">HTTP 201 Created, X-Request-ID: [uuid], Body: {"id":1,"name":"Alice","dob":"1990-05-10"}</span></div>
+  </div>
+
+  <div class="callout">
+    <div class="label">🎓 Congratulations!</div>
+    <p>You now understand every single line of this production-quality Go REST API. The patterns you've learned here — layered architecture, dependency injection, interface-based design, structured logging, graceful shutdown, and Docker packaging — are the same patterns used in real-world Go services at companies around the world. Keep building! 🚀</p>
+  </div>
+</div>
+
+</body>
+</html>
