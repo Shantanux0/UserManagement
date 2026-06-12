@@ -13,11 +13,9 @@ import (
 //go:embed migrations/*.sql
 var migrationFS embed.FS
 
-// RunMigrations runs all pending .up.sql migrations against the database.
 func RunMigrations(ctx context.Context, pool *pgxpool.Pool, logger *zap.Logger) error {
 	logger.Info("Running database migrations...")
 
-	// Create schema_migrations table if not exists
 	_, err := pool.Exec(ctx, `
 		CREATE TABLE IF NOT EXISTS schema_migrations (
 			version INT PRIMARY KEY,
@@ -28,7 +26,6 @@ func RunMigrations(ctx context.Context, pool *pgxpool.Pool, logger *zap.Logger) 
 		return fmt.Errorf("failed to create schema_migrations table: %w", err)
 	}
 
-	// Read files from embedded FS
 	entries, err := migrationFS.ReadDir("migrations")
 	if err != nil {
 		return fmt.Errorf("failed to read migrations directory: %w", err)

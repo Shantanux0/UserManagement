@@ -10,13 +10,11 @@ import (
 	"go.uber.org/zap"
 )
 
-// UserHandler manages user HTTP requests.
 type UserHandler struct {
 	service service.UserService
 	logger  *zap.Logger
 }
 
-// NewUserHandler creates a new UserHandler.
 func NewUserHandler(service service.UserService, logger *zap.Logger) *UserHandler {
 	return &UserHandler{
 		service: service,
@@ -24,7 +22,6 @@ func NewUserHandler(service service.UserService, logger *zap.Logger) *UserHandle
 	}
 }
 
-// CreateUser handles POST /users.
 func (h *UserHandler) CreateUser(c *fiber.Ctx) error {
 	var req models.CreateUserRequest
 	if err := c.BodyParser(&req); err != nil {
@@ -53,7 +50,6 @@ func (h *UserHandler) CreateUser(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(user)
 }
 
-// GetUserByID handles GET /users/:id.
 func (h *UserHandler) GetUserByID(c *fiber.Ctx) error {
 	idStr := c.Params("id")
 	id, err := strconv.Atoi(idStr)
@@ -81,7 +77,6 @@ func (h *UserHandler) GetUserByID(c *fiber.Ctx) error {
 	return c.JSON(user)
 }
 
-// UpdateUser handles PUT /users/:id.
 func (h *UserHandler) UpdateUser(c *fiber.Ctx) error {
 	idStr := c.Params("id")
 	id, err := strconv.Atoi(idStr)
@@ -125,7 +120,6 @@ func (h *UserHandler) UpdateUser(c *fiber.Ctx) error {
 	return c.JSON(user)
 }
 
-// DeleteUser handles DELETE /users/:id.
 func (h *UserHandler) DeleteUser(c *fiber.Ctx) error {
 	idStr := c.Params("id")
 	id, err := strconv.Atoi(idStr)
@@ -154,7 +148,6 @@ func (h *UserHandler) DeleteUser(c *fiber.Ctx) error {
 	return c.SendStatus(fiber.StatusNoContent)
 }
 
-// ListUsers handles GET /users (with optional pagination via page and limit query params).
 func (h *UserHandler) ListUsers(c *fiber.Ctx) error {
 	pageStr := c.Query("page")
 	limitStr := c.Query("limit")

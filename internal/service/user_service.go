@@ -12,12 +12,10 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-// Common errors
 var (
 	ErrUserNotFound = errors.New("user not found")
 )
 
-// UserService defines user related business operations.
 type UserService interface {
 	CreateUser(ctx context.Context, req models.CreateUserRequest) (models.UserResponse, error)
 	GetUserByID(ctx context.Context, id int32) (models.UserWithAgeResponse, error)
@@ -26,17 +24,14 @@ type UserService interface {
 	ListUsers(ctx context.Context, page, limit int) ([]models.UserWithAgeResponse, error)
 }
 
-// DefaultUserService is the default implementation of UserService.
 type DefaultUserService struct {
 	repo repository.UserRepository
 }
 
-// NewDefaultUserService creates a new DefaultUserService.
 func NewDefaultUserService(repo repository.UserRepository) UserService {
 	return &DefaultUserService{repo: repo}
 }
 
-// CreateUser parses and creates a user.
 func (s *DefaultUserService) CreateUser(ctx context.Context, req models.CreateUserRequest) (models.UserResponse, error) {
 	dob, err := time.Parse("2006-01-02", req.DOB)
 	if err != nil {
@@ -55,7 +50,6 @@ func (s *DefaultUserService) CreateUser(ctx context.Context, req models.CreateUs
 	}, nil
 }
 
-// GetUserByID retrieves a user and dynamically calculates their age.
 func (s *DefaultUserService) GetUserByID(ctx context.Context, id int32) (models.UserWithAgeResponse, error) {
 	user, err := s.repo.GetUserByID(ctx, id)
 	if err != nil {
@@ -73,7 +67,6 @@ func (s *DefaultUserService) GetUserByID(ctx context.Context, id int32) (models.
 	}, nil
 }
 
-// UpdateUser updates a user.
 func (s *DefaultUserService) UpdateUser(ctx context.Context, id int32, req models.UpdateUserRequest) (models.UserResponse, error) {
 	dob, err := time.Parse("2006-01-02", req.DOB)
 	if err != nil {
@@ -95,7 +88,6 @@ func (s *DefaultUserService) UpdateUser(ctx context.Context, id int32, req model
 	}, nil
 }
 
-// DeleteUser verifies existence and deletes a user.
 func (s *DefaultUserService) DeleteUser(ctx context.Context, id int32) error {
 	_, err := s.repo.GetUserByID(ctx, id)
 	if err != nil {
@@ -108,7 +100,6 @@ func (s *DefaultUserService) DeleteUser(ctx context.Context, id int32) error {
 	return s.repo.DeleteUser(ctx, id)
 }
 
-// ListUsers retrieves all users (or paginated users) and dynamically calculates their age.
 func (s *DefaultUserService) ListUsers(ctx context.Context, page, limit int) ([]models.UserWithAgeResponse, error) {
 	var users []db.User
 	var err error
@@ -136,7 +127,6 @@ func (s *DefaultUserService) ListUsers(ctx context.Context, page, limit int) ([]
 	return res, nil
 }
 
-// CalculateAge calculates the age based on date of birth.
 func CalculateAge(dob time.Time) int {
 	now := time.Now()
 	years := now.Year() - dob.Year()

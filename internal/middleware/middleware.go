@@ -8,7 +8,6 @@ import (
 	"go.uber.org/zap"
 )
 
-// RequestID injects a unique X-Request-ID header into responses and context if not present.
 func RequestID() fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		rid := c.Get("X-Request-ID")
@@ -21,12 +20,10 @@ func RequestID() fiber.Handler {
 	}
 }
 
-// RequestLogger logs HTTP requests including their method, path, response status, and duration.
 func RequestLogger(logger *zap.Logger) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		start := time.Now()
 
-		// Execute request handler chain
 		err := c.Next()
 
 		duration := time.Since(start)
