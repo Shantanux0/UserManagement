@@ -10,9 +10,8 @@ main
 .env
 *.env
 
-# PDF generator (node_modules)
-pdf_gen/node_modules/
-pdf_gen/package-lock.json
+# PDF generator (excluded entirely)
+pdf_gen/
 
 # Generated PDF
 *.pdf
